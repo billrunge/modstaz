@@ -79,12 +79,12 @@ namespace modstaz
 						SET QUOTED_IDENTIFIER ON;
 
 						CREATE TABLE [dbo].[SA{ storageAreaId }Rows](
-							[ID] [int] IDENTITY(1,1) NOT NULL,
-							[CreatedOn] [datetime] NOT NULL,
-							[LastModified] [datetime] NOT NULL,
+							[1] [int] IDENTITY(1,1) NOT NULL,
+							[2] [datetime] NOT NULL,
+							[3] [datetime] NOT NULL,
 						PRIMARY KEY CLUSTERED 
 						(
-							[ID] ASC
+							[1] ASC
 						)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 						) ON [PRIMARY];";
 
@@ -126,13 +126,13 @@ namespace modstaz
 
 				sql = $@"
 						INSERT INTO [SA{ storageAreaId }Columns] (DisplayName, SqlColumnName, DataType, CreatedOn, LastModified)
-						VALUES ('ID', 'ID', 'int', GETUTCDATE(), GETUTCDATE());
+						VALUES ('ID', '1', 'int', GETUTCDATE(), GETUTCDATE());
 
 						INSERT INTO [SA{ storageAreaId }Columns] (DisplayName, SqlColumnName, DataType, CreatedOn, LastModified)
-						VALUES ('Created On', 'CreatedOn', 'datetime', GETUTCDATE(), GETUTCDATE());
+						VALUES ('Created On', '2', 'datetime', GETUTCDATE(), GETUTCDATE());
 
 						INSERT INTO [SA{ storageAreaId }Columns] (DisplayName, SqlColumnName, DataType, CreatedOn, LastModified)
-						VALUES ('Last Modified','LastModified', 'datetime', GETUTCDATE(), GETUTCDATE());";
+						VALUES ('Last Modified','3', 'datetime', GETUTCDATE(), GETUTCDATE());";
 
 				command = new SqlCommand(sql, connection);
 
