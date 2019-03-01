@@ -110,7 +110,6 @@ namespace modstaz
 						CREATE TABLE [dbo].[SA{ storageAreaId }Columns](
 							[ID] [int] IDENTITY(1,1) NOT NULL,
 							[DisplayName] [nvarchar](255) NOT NULL,
-							[SqlColumnName] [nvarchar](128) NOT NULL,
 							[DataType] [nvarchar](50) NOT NULL,
 							[CreatedOn] [datetime] NOT NULL,
 							[LastModified] [datetime] NOT NULL,
@@ -125,14 +124,14 @@ namespace modstaz
 				await command.ExecuteNonQueryAsync();
 
 				sql = $@"
-						INSERT INTO [SA{ storageAreaId }Columns] (DisplayName, SqlColumnName, DataType, CreatedOn, LastModified)
-						VALUES ('ID', '1', 'int', GETUTCDATE(), GETUTCDATE());
+						INSERT INTO [SA{ storageAreaId }Columns] (DisplayName, DataType, CreatedOn, LastModified)
+						VALUES ('ID', 'int', GETUTCDATE(), GETUTCDATE());
 
-						INSERT INTO [SA{ storageAreaId }Columns] (DisplayName, SqlColumnName, DataType, CreatedOn, LastModified)
-						VALUES ('Created On', '2', 'datetime', GETUTCDATE(), GETUTCDATE());
+						INSERT INTO [SA{ storageAreaId }Columns] (DisplayName, DataType, CreatedOn, LastModified)
+						VALUES ('Created On', 'datetime', GETUTCDATE(), GETUTCDATE());
 
-						INSERT INTO [SA{ storageAreaId }Columns] (DisplayName, SqlColumnName, DataType, CreatedOn, LastModified)
-						VALUES ('Last Modified','3', 'datetime', GETUTCDATE(), GETUTCDATE());";
+						INSERT INTO [SA{ storageAreaId }Columns] (DisplayName, DataType, CreatedOn, LastModified)
+						VALUES ('Last Modified', 'datetime', GETUTCDATE(), GETUTCDATE());";
 
 				command = new SqlCommand(sql, connection);
 
