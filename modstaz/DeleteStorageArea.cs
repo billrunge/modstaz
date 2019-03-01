@@ -36,8 +36,8 @@ namespace modstaz
             {
                 await connection.OpenAsync();
                 string sql = $@"
-                    DROP TABLE SA{ storageAreaId }Columns
-                    DROP TABLE SA{ storageAreaId }Rows
+                    DROP TABLE [{ storageAreaId }Columns]
+                    DROP TABLE [{ storageAreaId }Rows]
                     DELETE FROM StorageAreas WHERE ID = { storageAreaId }";
                 SqlCommand command = new SqlCommand(sql, connection);
                 await command.ExecuteNonQueryAsync();

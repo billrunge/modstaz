@@ -78,7 +78,7 @@ namespace modstaz
 
 						SET QUOTED_IDENTIFIER ON;
 
-						CREATE TABLE [dbo].[SA{ storageAreaId }Rows](
+						CREATE TABLE [dbo].[{ storageAreaId }Rows](
 							[1] [int] IDENTITY(1,1) NOT NULL,
 							[2] [datetime] NOT NULL,
 							[3] [datetime] NOT NULL,
@@ -107,7 +107,7 @@ namespace modstaz
 
 						SET QUOTED_IDENTIFIER ON;
 
-						CREATE TABLE [dbo].[SA{ storageAreaId }Columns](
+						CREATE TABLE [dbo].[{ storageAreaId }Columns](
 							[ID] [int] IDENTITY(1,1) NOT NULL,
 							[DisplayName] [nvarchar](255) NOT NULL,
 							[DataType] [nvarchar](50) NOT NULL,
@@ -124,13 +124,13 @@ namespace modstaz
 				await command.ExecuteNonQueryAsync();
 
 				sql = $@"
-						INSERT INTO [SA{ storageAreaId }Columns] (DisplayName, DataType, CreatedOn, LastModified)
+						INSERT INTO [{ storageAreaId }Columns] (DisplayName, DataType, CreatedOn, LastModified)
 						VALUES ('ID', 'int', GETUTCDATE(), GETUTCDATE());
 
-						INSERT INTO [SA{ storageAreaId }Columns] (DisplayName, DataType, CreatedOn, LastModified)
+						INSERT INTO [{ storageAreaId }Columns] (DisplayName, DataType, CreatedOn, LastModified)
 						VALUES ('Created On', 'datetime', GETUTCDATE(), GETUTCDATE());
 
-						INSERT INTO [SA{ storageAreaId }Columns] (DisplayName, DataType, CreatedOn, LastModified)
+						INSERT INTO [{ storageAreaId }Columns] (DisplayName, DataType, CreatedOn, LastModified)
 						VALUES ('Last Modified', 'datetime', GETUTCDATE(), GETUTCDATE());";
 
 				command = new SqlCommand(sql, connection);
