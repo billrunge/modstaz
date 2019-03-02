@@ -16,20 +16,25 @@ namespace modstaz
     {
         [FunctionName("CreateColumn")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string name = req.Query["name"];
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
 
-            return name != null
-                ? (ActionResult)new OkObjectResult($"Hello, {name}")
-                : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+            int storageAreaId = data.StorageAreaID;
+            int columnTypeId = data.ColumnTypeID;
+            string displayName = data.DisplayName;
+
+            int columnId = await CreateColumnIdAsync(displayName, storageAreaId, columnTypeId);
+            await CreateColumnInRowTableAsync(storageAreaId, columnId, "need this");
+
+
+            return (ActionResult)new OkObjectResult($"Column created successfully");
+                //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");
         }
 
         public static async Task<int> CreateColumnIdAsync(string displayName, int storageAreaId, int columnTypeId)
