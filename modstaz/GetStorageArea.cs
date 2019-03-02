@@ -1,15 +1,15 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Data;
+using System.Data.SqlClient;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace modstaz
 {
@@ -22,21 +22,24 @@ namespace modstaz
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string name = req.Query["name"];
+            //string name = req.Query["name"];
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
+            //string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            //dynamic data = JsonConvert.DeserializeObject(requestBody);
+            //name = name ?? data?.name;
 
-            return name != null
-                ? (ActionResult)new OkObjectResult($"Hello, {name}")
-                : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+            List<KeyValuePair<int, string>> idColumns = await GetColumnsAsync(11);
+            string result = await GetRowsAsync(11, idColumns);
+
+
+            return (ActionResult)new OkObjectResult(result);
+                //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");
         }
 
         private static async Task<List<KeyValuePair<int, string>>> GetColumnsAsync(int storageAreaId)
         {
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
-            {              
+            {
 
                 string sql = $@"
                     SELECT [ID], 
@@ -53,7 +56,7 @@ namespace modstaz
                     List<KeyValuePair<int, string>> idColumnList = new List<KeyValuePair<int, string>>();
                     foreach (DataRow row in dataTable.Rows)
                     {
-                        if(!int.TryParse(row["ID"].ToString(), out int columnId))
+                        if (!int.TryParse(row["ID"].ToString(), out int columnId))
                         {
                             throw new InvalidCastException("Unable to cast Column ID returned from Database to int");
                         }
@@ -64,9 +67,37 @@ namespace modstaz
                     }
 
                     return idColumnList;
-
                 }
             }
         }
+
+
+        private static async Task<string> GetRowsAsync(int storageAreaId, List<KeyValuePair<int, string>> idColumn)
+        {
+            string columnString = $"[{ idColumn[0].Key.ToString() }] AS [{ idColumn[0].Value }]";
+
+            for (int i = 1; i < idColumn.Count; i++)
+            {
+                columnString = $"[{ idColumn[i].Key.ToString() }] AS [{ idColumn[i] }], " + columnString;
+            }
+
+            string sql = $@"
+                    SELECT { columnString } 
+                    FROM   [{ storageAreaId }Rows]";
+
+            return sql;
+
+            //using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            //{
+
+            //}
+
+
+        }
+
+
+
+
+
     }
 }
