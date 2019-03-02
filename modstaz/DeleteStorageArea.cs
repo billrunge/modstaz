@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
+using System.Data;
 
 namespace modstaz
 {
@@ -38,8 +39,9 @@ namespace modstaz
                 string sql = $@"
                     DROP TABLE [{ storageAreaId }Columns]
                     DROP TABLE [{ storageAreaId }Rows]
-                    DELETE FROM StorageAreas WHERE ID = { storageAreaId }";
+                    DELETE FROM StorageAreas WHERE ID = @StorageAreaID";
                 SqlCommand command = new SqlCommand(sql, connection);
+                command.Parameters.Add(new SqlParameter { ParameterName = "@StorageAreaID", SqlDbType = SqlDbType.Int, Value = storageAreaId });
                 await command.ExecuteNonQueryAsync();
             }
 
