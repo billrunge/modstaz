@@ -150,7 +150,13 @@ namespace modstaz
 				await connection.OpenAsync();
 
 				string sql = $@"
-					INSERT INTO [StorageAreaAccess] VALUES(@UserID, @StorageAreaID, 1)";
+                        INSERT INTO [StorageAreaAccess] 
+                                    ([UserID], 
+                                     [StorageAreaID], 
+                                     [Role]) 
+                        VALUES     (@UserID, 
+                                    @StorageAreaID, 
+                                    1) ";
 
 				SqlCommand command = new SqlCommand(sql, connection);
 
