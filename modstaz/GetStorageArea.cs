@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace modstaz
@@ -22,7 +21,7 @@ namespace modstaz
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            if(!int.TryParse(req.Query["StorageAreaID"], out int storageAreaId))
+            if (!int.TryParse(req.Query["StorageAreaID"], out int storageAreaId))
             {
                 throw new InvalidCastException("Unable to cast StorageAreaID from database to int");
             }
@@ -35,8 +34,8 @@ namespace modstaz
             string result = await GetRowsAsync(storageAreaId, idColumns);
 
 
-            return (ActionResult)new OkObjectResult(result);
-                //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+            return new OkObjectResult(result);
+            //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");
         }
 
         private static async Task<List<KeyValuePair<int, string>>> GetColumnsAsync(int storageAreaId)
@@ -85,23 +84,25 @@ namespace modstaz
                 columnString = $"[{ idColumn[i].Key.ToString() }] AS [{ idColumn[i].Value }], " + columnString;
             }
 
-            string sql = $@"
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+
+                string sql = $@"
                     SELECT { columnString } 
                     FROM   [{ storageAreaId }Rows]";
 
-            return sql;
+                SqlCommand command = new SqlCommand(sql, connection);
 
-            //using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
-            //{
+                using (SqlDataReader dataReader = await command.ExecuteReaderAsync())
+                {
+                    DataTable dataTable = new DataTable();
+                    dataTable.Load(dataReader);
 
-            //}
-
-
+                    return JsonConvert.SerializeObject(dataTable, Formatting.Indented);
+                }
+            }
         }
-
-
-
-
 
     }
 }
