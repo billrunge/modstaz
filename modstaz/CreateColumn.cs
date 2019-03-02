@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Data.SqlClient;
 
 namespace modstaz
 {
@@ -29,5 +30,22 @@ namespace modstaz
                 ? (ActionResult)new OkObjectResult($"Hello, {name}")
                 : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
         }
+
+        public static async Task CreateColumnInRowTableAsync(int storageAreaId, int columnId, string sqlDataType)
+        {
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+                string sql = $@"
+                    ALTER TABLE [{ storageAreaId }Rows] 
+                      ADD [{columnId}] { sqlDataType }";
+                SqlCommand command = new SqlCommand(sql, connection);
+                await command.ExecuteNonQueryAsync();
+            }
+        }
+
+
+
+
     }
 }
