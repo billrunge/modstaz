@@ -126,10 +126,10 @@ namespace modstaz
 						  ) 
 						ON [PRIMARY]; 
 
-						ALTER TABLE [dbo].[{ storageAreaId }Columns]  WITH CHECK ADD  CONSTRAINT [FK__{ storageAreaId }Columns__ColumnTypes] FOREIGN KEY([ColumnTypes])
-						REFERENCES [dbo].[ColumnType] ([ID])
+						ALTER TABLE [dbo].[{ storageAreaId }Columns]  WITH CHECK ADD  CONSTRAINT [FK__{ storageAreaId }Columns__ColumnType] FOREIGN KEY([ColumnType])
+						REFERENCES [dbo].[ColumnTypes] ([ID])
 
-						ALTER TABLE [dbo].[{ storageAreaId }Columns] CHECK CONSTRAINT [FK__{ storageAreaId }Columns__ColumnTypes]";
+						ALTER TABLE [dbo].[{ storageAreaId }Columns] CHECK CONSTRAINT [FK__{ storageAreaId }Columns__ColumnType]";
 
 				SqlCommand command = new SqlCommand(sql, connection);
 
