@@ -30,8 +30,8 @@ namespace modstaz
             string displayName = data.DisplayName;
 
             int columnId = await CreateColumnIdAsync(displayName, storageAreaId, columnTypeId);
-            await CreateColumnInRowTableAsync(storageAreaId, columnId, "need this");
-
+            string sqlDataType = await GetSqlDataTypeFromColumnTypeId(columnTypeId);
+            await CreateColumnInRowTableAsync(storageAreaId, columnId, sqlDataType);
 
             return (ActionResult)new OkObjectResult($"Column created successfully");
                 //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");
@@ -83,7 +83,22 @@ namespace modstaz
         }
 
 
+        public static async Task<string> GetSqlDataTypeFromColumnTypeId(int columnTypeId)
+        {
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+                string sql = @"
+                    SELECT [SqlDataType] 
+                    FROM   [ColumnTypes] 
+                    WHERE  ID = @ColumnTypeID";
 
+                SqlCommand command = new SqlCommand(sql, connection);
+                command.Parameters.Add(new SqlParameter { ParameterName = "@ColumnTypeID", SqlDbType = SqlDbType.Int, Value = columnTypeId });
+
+                return (string)await command.ExecuteScalarAsync();
+            }
+        }
 
     }
 }
