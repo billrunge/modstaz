@@ -117,7 +117,7 @@ namespace modstaz
 						  ( 
 							 [ID]           [int] IDENTITY(1, 1) NOT NULL, 
 							 [DisplayName]  [nvarchar](255) NOT NULL, 
-							 [ColumnTypeID]   [int] NOT NULL,
+							 [ColumnTypeID] [int] NOT NULL,
 							 [IsEditable]   [bit] NOT NULL, 
 							 [CreatedOn]    [datetime] NOT NULL, 
 							 [LastModified] [datetime] NOT NULL, 
