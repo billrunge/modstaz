@@ -39,7 +39,8 @@ namespace modstaz
                 string sql = $@"
                     DROP TABLE [{ storageAreaId }Columns]
                     DROP TABLE [{ storageAreaId }Rows]
-                    DELETE FROM StorageAreas WHERE ID = @StorageAreaID";
+                    DELETE FROM [StorageAreaAccess] WHERE StorageAreaID = @StorageAreaID
+                    DELETE FROM [StorageAreas] WHERE ID = @StorageAreaID";
                 SqlCommand command = new SqlCommand(sql, connection);
                 command.Parameters.Add(new SqlParameter { ParameterName = "@StorageAreaID", SqlDbType = SqlDbType.Int, Value = storageAreaId });
                 await command.ExecuteNonQueryAsync();
