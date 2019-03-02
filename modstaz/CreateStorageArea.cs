@@ -117,7 +117,7 @@ namespace modstaz
 						  ( 
 							 [ID]           [int] IDENTITY(1, 1) NOT NULL, 
 							 [DisplayName]  [nvarchar](255) NOT NULL, 
-							 [DataType]     [nvarchar](50) NOT NULL,
+							 [ColumnType]     [int] NOT NULL,
 							 [IsEditable]   [bit] NOT NULL, 
 							 [CreatedOn]    [datetime] NOT NULL, 
 							 [LastModified] [datetime] NOT NULL, 
@@ -133,36 +133,36 @@ namespace modstaz
 					sql = $@"
 						INSERT INTO [{ storageAreaId }Columns] 
 									(DisplayName, 
-									 DataType,
+									 ColumnType,
 									 IsEditable,
 									 CreatedOn, 
 									 LastModified) 
 						VALUES      ('ID', 
-									 'int', 
+									 1, 
 									 0,
 									 Getutcdate(), 
 									 Getutcdate()); 
 
 						INSERT INTO [{ storageAreaId }Columns] 
 									(DisplayName, 
-									 DataType, 
+									 ColumnType, 
 									 IsEditable,
 									 CreatedOn, 
 									 LastModified) 
 						VALUES      ('Created On', 
-									 'datetime', 
+									 7, 
 									 0,
 									 Getutcdate(), 
 									 Getutcdate()); 
 
 						INSERT INTO [{ storageAreaId }Columns] 
 									(DisplayName, 
-									 DataType, 
+									 ColumnType, 
 									 IsEditable,
 									 CreatedOn, 
 									 LastModified) 
 						VALUES      ('Last Modified', 
-									 'datetime', 
+									 7, 
 									 0,
 									 Getutcdate(), 
 									 Getutcdate()); ";
