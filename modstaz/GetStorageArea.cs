@@ -79,7 +79,7 @@ namespace modstaz
 
             for (int i = 1; i < idColumn.Count; i++)
             {
-                columnString = $"[{ idColumn[i].Key.ToString() }] AS [{ idColumn[i] }], " + columnString;
+                columnString = $"[{ idColumn[i].Key.ToString() }] AS [{ idColumn[i].Value }], " + columnString;
             }
 
             string sql = $@"
