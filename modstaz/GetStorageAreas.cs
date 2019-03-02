@@ -13,18 +13,32 @@ namespace modstaz
     public static class GetStorageAreas
     {
         [FunctionName("GetStorageAreas")]
-        public static IActionResult Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-            ILogger log)
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req, ILogger log)
         {
             log.LogInformation("GetStorageAreas trigger function processed a request.");
+
+            if (!int.TryParse(req.Query["UserId"], out int userId))
+            {
+                throw new InvalidCastException("Unable to cast UserId to int");
+            }
 
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
             {
                 connection.Open();
-                string sql = "SELECT * FROM StorageAreas";
+                string sql = @"
+                        SELECT S.[ID], 
+                               S.[Name], 
+                               S.[CreatedBy], 
+                               S.[CreatedOn], 
+                               S.[LastModified] 
+                        FROM   [StorageAreas] S 
+                               INNER JOIN [StorageAreaAccess] SA 
+                                       ON SA.StorageAreaID = S.ID 
+                        WHERE  SA.UserID = @UserID";
 
                 SqlCommand command = new SqlCommand(sql, connection);
+
+                command.Parameters.Add(new SqlParameter { ParameterName = "@UserID", SqlDbType = SqlDbType.Int, Value = userId });
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
                 {

@@ -30,7 +30,7 @@ namespace modstaz
 			int storageAreaId = await CreateStorageAreaIdAsync(name, userId);
 			await CreateRowsTableAsync(storageAreaId);
 			await CreateColumnsTableAsync(storageAreaId);
-            await AddAccessAsync(storageAreaId, userId);
+			await AddAccessAsync(storageAreaId, userId);
 
 			return (ActionResult)new OkObjectResult($"storage area created");
 				//: new BadRequestObjectResult("Please pass a name on the query string or in the request body");
@@ -142,28 +142,24 @@ namespace modstaz
 
 
 
-        private static async Task AddAccessAsync(int storageAreaId, int userId)
-        {
-            using (SqlConnection connection = new SqlConnection())
-            {
-                connection.ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING");
-                await connection.OpenAsync();
+		private static async Task AddAccessAsync(int storageAreaId, int userId)
+		{
+			using (SqlConnection connection = new SqlConnection())
+			{
+				connection.ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING");
+				await connection.OpenAsync();
 
-                string sql = $@"
-                    INSERT INTO [StorageAreaAccess] VALUES(@UserID, @StorageAreaID, 1)";
+				string sql = $@"
+					INSERT INTO [StorageAreaAccess] VALUES(@UserID, @StorageAreaID, 1)";
 
-                SqlCommand command = new SqlCommand(sql, connection);
+				SqlCommand command = new SqlCommand(sql, connection);
 
-                command.Parameters.Add(new SqlParameter { ParameterName = "@StorageAreaID", SqlDbType = SqlDbType.Int, Value = storageAreaId });
-                command.Parameters.Add(new SqlParameter { ParameterName = "@UserID", SqlDbType = SqlDbType.Int, Value = userId });
+				command.Parameters.Add(new SqlParameter { ParameterName = "@StorageAreaID", SqlDbType = SqlDbType.Int, Value = storageAreaId });
+				command.Parameters.Add(new SqlParameter { ParameterName = "@UserID", SqlDbType = SqlDbType.Int, Value = userId });
 
-                await command.ExecuteNonQueryAsync();
-            }
-        }
+				await command.ExecuteNonQueryAsync();
+			}
+		}
 
-
-
-
-
-    }
+	}
 }
