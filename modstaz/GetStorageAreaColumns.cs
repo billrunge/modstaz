@@ -45,6 +45,7 @@ namespace modstaz
                 SELECT [ID], 
                        [DisplayName], 
                        [DataType], 
+                       [IsEditable],
                        [CreatedOn], 
                        [LastModified] 
                 FROM   [{ storageAreaId }Columns]";
