@@ -45,16 +45,7 @@ namespace modstaz
                 command.Parameters.Add(new SqlParameter { ParameterName = "@StorageAreaID", SqlDbType = SqlDbType.Int, Value = storageAreaId });
                 await command.ExecuteNonQueryAsync();
             }
-
         }
-
-
-
-
     }
-
-
-
-
 
 }
