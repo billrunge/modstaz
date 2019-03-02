@@ -40,6 +40,7 @@ namespace modstaz
         {
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
             {
+                await connection.OpenAsync();
 
                 string sql = $@"
                     SELECT [ID], 
