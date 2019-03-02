@@ -21,15 +21,17 @@ namespace modstaz
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string name = req.Query["name"];
+            if(!int.TryParse(req.Query["StorageAreaID"], out int storageAreaId))
+            {
+                throw new InvalidCastException("Unable to cast StorageAreaID from database into an int");
+            }
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
+            //string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            //dynamic data = JsonConvert.DeserializeObject(requestBody);
+            //name = name ?? data?.name;
 
-            return name != null
-                ? (ActionResult)new OkObjectResult($"Hello, {name}")
-                : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+            return (ActionResult)new OkObjectResult(await GetStorageAreaColumnsAsync(storageAreaId));
+                //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");
         }
 
 
