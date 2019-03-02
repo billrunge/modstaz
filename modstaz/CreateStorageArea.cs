@@ -146,7 +146,7 @@ namespace modstaz
 						INSERT INTO [{ storageAreaId }Columns] 
 									(DisplayName, 
 									 DataType, 
-									 IsEditable
+									 IsEditable,
 									 CreatedOn, 
 									 LastModified) 
 						VALUES      ('Created On', 
