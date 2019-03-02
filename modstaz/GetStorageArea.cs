@@ -78,9 +78,9 @@ namespace modstaz
 
         private static async Task<string> GetRowsAsync(int storageAreaId, List<KeyValuePair<int, string>> idColumn)
         {
-            string columnString = $"[{ idColumn[0].Key.ToString() }] AS [{ idColumn[0].Value }]";
+            string columnString = $"[{ idColumn[idColumn.Count - 1].Key.ToString() }] AS [{ idColumn[idColumn.Count - 1].Value }]";
 
-            for (int i = 1; i < idColumn.Count; i++)
+            for (int i = idColumn.Count - 2; i >= 0; i--)
             {
                 columnString = $"[{ idColumn[i].Key.ToString() }] AS [{ idColumn[i].Value }], " + columnString;
             }
