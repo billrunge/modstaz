@@ -7,6 +7,8 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace modstaz
 {
@@ -29,11 +31,35 @@ namespace modstaz
                 ? (ActionResult)new OkObjectResult($"Hello, {name}")
                 : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
         }
+
+
+        private static async Task<string> GetStorageAreaColumnsAsync(int storageAreaId)
+        {
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+
+                string sql = $@"
+                SELECT [ID], 
+                       [DisplayName], 
+                       [DataType], 
+                       [CreatedOn], 
+                       [LastModified] 
+                FROM   [{ storageAreaId }Columns]";
+
+                SqlCommand command = new SqlCommand(sql, connection);
+
+                using (SqlDataReader dataReader = await command.ExecuteReaderAsync())
+                {
+                    DataTable dataTable = new DataTable();
+                    dataTable.Load(dataReader);
+
+                    return JsonConvert.SerializeObject(dataTable, Formatting.Indented);
+                }
+
+            }
+
+        }
+
     }
-
-    private static async Task<string> GetStorageAreaColumnsAsync(int storageAreaId)
-    {
-
-    }
-
 }
