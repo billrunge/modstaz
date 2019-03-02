@@ -104,21 +104,20 @@ namespace modstaz
 				connection.Open();
 
 				string sql = $@"
-						SET ANSI_NULLS ON;
+						SET ANSI_NULLS ON; 
+						SET QUOTED_IDENTIFIER ON; 
 
-						SET QUOTED_IDENTIFIER ON;
-
-						CREATE TABLE [dbo].[{ storageAreaId }Columns](
-							[ID] [int] IDENTITY(1,1) NOT NULL,
-							[DisplayName] [nvarchar](255) NOT NULL,
-							[DataType] [nvarchar](50) NOT NULL,
-							[CreatedOn] [datetime] NOT NULL,
-							[LastModified] [datetime] NOT NULL,
-						PRIMARY KEY CLUSTERED 
-						(
-							[ID] ASC
-						)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
-						) ON [PRIMARY];";
+						CREATE TABLE [dbo].[{ storageAreaId }Columns] 
+						  ( 
+							 [ID]           [int] IDENTITY(1, 1) NOT NULL, 
+							 [DisplayName]  [nvarchar](255) NOT NULL, 
+							 [DataType]     [nvarchar](50) NOT NULL, 
+							 [CreatedOn]    [datetime] NOT NULL, 
+							 [LastModified] [datetime] NOT NULL, 
+							 PRIMARY KEY CLUSTERED ( [ID] ASC )WITH (STATISTICS_NORECOMPUTE = OFF, 
+							 IGNORE_DUP_KEY = OFF) ON [PRIMARY] 
+						  ) 
+						ON [PRIMARY]; ";
 
 				SqlCommand command = new SqlCommand(sql, connection);
 
