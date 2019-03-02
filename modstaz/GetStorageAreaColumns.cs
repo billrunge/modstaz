@@ -44,7 +44,7 @@ namespace modstaz
                 string sql = $@"
                 SELECT [ID], 
                        [DisplayName], 
-                       [ColumnType], 
+                       [ColumnTypeID], 
                        [IsEditable],
                        [CreatedOn], 
                        [LastModified] 
