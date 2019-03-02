@@ -134,36 +134,36 @@ namespace modstaz
 						INSERT INTO [{ storageAreaId }Columns] 
 									(DisplayName, 
 									 DataType,
-                                     IsEditable,
+									 IsEditable,
 									 CreatedOn, 
 									 LastModified) 
 						VALUES      ('ID', 
 									 'int', 
-                                     0,
+									 0,
 									 Getutcdate(), 
 									 Getutcdate()); 
 
 						INSERT INTO [{ storageAreaId }Columns] 
 									(DisplayName, 
 									 DataType, 
-                                     IsEditable
+									 IsEditable
 									 CreatedOn, 
 									 LastModified) 
 						VALUES      ('Created On', 
 									 'datetime', 
-                                     0,
+									 0,
 									 Getutcdate(), 
 									 Getutcdate()); 
 
 						INSERT INTO [{ storageAreaId }Columns] 
 									(DisplayName, 
 									 DataType, 
-                                     IsEditable,
+									 IsEditable,
 									 CreatedOn, 
 									 LastModified) 
 						VALUES      ('Last Modified', 
 									 'datetime', 
-                                     0,
+									 0,
 									 Getutcdate(), 
 									 Getutcdate()); ";
 
