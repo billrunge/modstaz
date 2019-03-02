@@ -43,10 +43,16 @@ namespace modstaz
 				await connection.OpenAsync();
 
 				string sql = $@"
-					INSERT INTO [StorageAreas] 
-					([Name], [CreatedBy], [CreatedOn], [LastModified]) 
-					OUTPUT INSERTED.ID 
-					VALUES (@Name, @UserID, GETUTCDATE(), GETUTCDATE())";
+						INSERT INTO [StorageAreas] 
+									([Name], 
+									 [CreatedBy], 
+									 [CreatedOn], 
+									 [LastModified]) 
+						OUTPUT      INSERTED.ID 
+						VALUES      (@Name, 
+									 @UserID, 
+									 Getutcdate(), 
+									 Getutcdate()) ";
 
 				SqlCommand command = new SqlCommand(sql, connection);
 
