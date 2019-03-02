@@ -133,31 +133,37 @@ namespace modstaz
 					sql = $@"
 						INSERT INTO [{ storageAreaId }Columns] 
 									(DisplayName, 
-									 DataType, 
+									 DataType,
+                                     IsEditable,
 									 CreatedOn, 
 									 LastModified) 
 						VALUES      ('ID', 
 									 'int', 
+                                     0,
 									 Getutcdate(), 
 									 Getutcdate()); 
 
 						INSERT INTO [{ storageAreaId }Columns] 
 									(DisplayName, 
 									 DataType, 
+                                     IsEditable
 									 CreatedOn, 
 									 LastModified) 
 						VALUES      ('Created On', 
 									 'datetime', 
+                                     0,
 									 Getutcdate(), 
 									 Getutcdate()); 
 
 						INSERT INTO [{ storageAreaId }Columns] 
 									(DisplayName, 
 									 DataType, 
+                                     IsEditable,
 									 CreatedOn, 
 									 LastModified) 
 						VALUES      ('Last Modified', 
 									 'datetime', 
+                                     0,
 									 Getutcdate(), 
 									 Getutcdate()); ";
 
