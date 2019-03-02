@@ -117,7 +117,8 @@ namespace modstaz
 						  ( 
 							 [ID]           [int] IDENTITY(1, 1) NOT NULL, 
 							 [DisplayName]  [nvarchar](255) NOT NULL, 
-							 [DataType]     [nvarchar](50) NOT NULL, 
+							 [DataType]     [nvarchar](50) NOT NULL,
+                             [IsEditable]   [bit] NOT NULL, 
 							 [CreatedOn]    [datetime] NOT NULL, 
 							 [LastModified] [datetime] NOT NULL, 
 							 PRIMARY KEY CLUSTERED ( [ID] ASC )WITH (STATISTICS_NORECOMPUTE = OFF, 
