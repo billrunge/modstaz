@@ -124,7 +124,12 @@ namespace modstaz
 							 PRIMARY KEY CLUSTERED ( [ID] ASC )WITH (STATISTICS_NORECOMPUTE = OFF, 
 							 IGNORE_DUP_KEY = OFF) ON [PRIMARY] 
 						  ) 
-						ON [PRIMARY]; ";
+						ON [PRIMARY]; 
+
+						ALTER TABLE [dbo].[{ storageAreaId }Columns]  WITH CHECK ADD  CONSTRAINT [FK__{ storageAreaId }Columns__ColumnTypes] FOREIGN KEY([ColumnTypes])
+						REFERENCES [dbo].[ColumnType] ([ID])
+
+						ALTER TABLE [dbo].[{ storageAreaId }Columns] CHECK CONSTRAINT [FK__{ storageAreaId }Columns__ColumnTypes]";
 
 				SqlCommand command = new SqlCommand(sql, connection);
 
