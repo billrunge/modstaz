@@ -124,15 +124,36 @@ namespace modstaz
 
 				await command.ExecuteNonQueryAsync();
 
-				sql = $@"
-						INSERT INTO [{ storageAreaId }Columns] (DisplayName, DataType, CreatedOn, LastModified)
-						VALUES ('ID', 'int', GETUTCDATE(), GETUTCDATE());
+					sql = $@"
+						INSERT INTO [{ storageAreaId }Columns] 
+									(DisplayName, 
+									 DataType, 
+									 CreatedOn, 
+									 LastModified) 
+						VALUES      ('ID', 
+									 'int', 
+									 Getutcdate(), 
+									 Getutcdate()); 
 
-						INSERT INTO [{ storageAreaId }Columns] (DisplayName, DataType, CreatedOn, LastModified)
-						VALUES ('Created On', 'datetime', GETUTCDATE(), GETUTCDATE());
+						INSERT INTO [{ storageAreaId }Columns] 
+									(DisplayName, 
+									 DataType, 
+									 CreatedOn, 
+									 LastModified) 
+						VALUES      ('Created On', 
+									 'datetime', 
+									 Getutcdate(), 
+									 Getutcdate()); 
 
-						INSERT INTO [{ storageAreaId }Columns] (DisplayName, DataType, CreatedOn, LastModified)
-						VALUES ('Last Modified', 'datetime', GETUTCDATE(), GETUTCDATE());";
+						INSERT INTO [{ storageAreaId }Columns] 
+									(DisplayName, 
+									 DataType, 
+									 CreatedOn, 
+									 LastModified) 
+						VALUES      ('Last Modified', 
+									 'datetime', 
+									 Getutcdate(), 
+									 Getutcdate()); ";
 
 				command = new SqlCommand(sql, connection);
 
