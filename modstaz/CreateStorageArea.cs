@@ -191,7 +191,7 @@ namespace modstaz
 						INSERT INTO [StorageAreaAccess] 
 									([UserID], 
 									 [StorageAreaID], 
-									 [Role]) 
+									 [RoleID]) 
 						VALUES     (@UserID, 
 									@StorageAreaID, 
 									1) ";
