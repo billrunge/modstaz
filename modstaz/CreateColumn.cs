@@ -46,7 +46,7 @@ namespace modstaz
                 string sql = $@"
                     INSERT INTO [{ storageAreaId }Columns] 
                                 ([DisplayName], 
-                                 [ColumnType], 
+                                 [ColumnTypeID], 
                                  [IsEditable], 
                                  [CreatedOn], 
                                  [LastModified]) 
