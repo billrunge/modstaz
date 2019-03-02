@@ -117,7 +117,7 @@ namespace modstaz
 						  ( 
 							 [ID]           [int] IDENTITY(1, 1) NOT NULL, 
 							 [DisplayName]  [nvarchar](255) NOT NULL, 
-							 [ColumnType]     [int] NOT NULL,
+							 [ColumnTypeID]   [int] NOT NULL,
 							 [IsEditable]   [bit] NOT NULL, 
 							 [CreatedOn]    [datetime] NOT NULL, 
 							 [LastModified] [datetime] NOT NULL, 
@@ -126,10 +126,10 @@ namespace modstaz
 						  ) 
 						ON [PRIMARY]; 
 
-						ALTER TABLE [dbo].[{ storageAreaId }Columns]  WITH CHECK ADD  CONSTRAINT [FK__{ storageAreaId }Columns__ColumnType] FOREIGN KEY([ColumnType])
+						ALTER TABLE [dbo].[{ storageAreaId }Columns]  WITH CHECK ADD  CONSTRAINT [FK__{ storageAreaId }Columns__ColumnTypeID] FOREIGN KEY([ColumnTypeID])
 						REFERENCES [dbo].[ColumnTypes] ([ID])
 
-						ALTER TABLE [dbo].[{ storageAreaId }Columns] CHECK CONSTRAINT [FK__{ storageAreaId }Columns__ColumnType]";
+						ALTER TABLE [dbo].[{ storageAreaId }Columns] CHECK CONSTRAINT [FK__{ storageAreaId }Columns__ColumnTypeID]";
 
 				SqlCommand command = new SqlCommand(sql, connection);
 
@@ -137,11 +137,11 @@ namespace modstaz
 
 					sql = $@"
 						INSERT INTO [{ storageAreaId }Columns] 
-									(DisplayName, 
-									 ColumnType,
-									 IsEditable,
-									 CreatedOn, 
-									 LastModified) 
+									([DisplayName], 
+									 [ColumnTypeID],
+									 [IsEditable],
+									 [CreatedOn], 
+									 [LastModified]) 
 						VALUES      ('ID', 
 									 1, 
 									 0,
@@ -149,11 +149,11 @@ namespace modstaz
 									 Getutcdate()); 
 
 						INSERT INTO [{ storageAreaId }Columns] 
-									(DisplayName, 
-									 ColumnType, 
-									 IsEditable,
-									 CreatedOn, 
-									 LastModified) 
+									([DisplayName], 
+									 [ColumnTypeID], 
+									 [IsEditable],
+									 [CreatedOn], 
+									 [LastModified]) 
 						VALUES      ('Created On', 
 									 7, 
 									 0,
@@ -161,11 +161,11 @@ namespace modstaz
 									 Getutcdate()); 
 
 						INSERT INTO [{ storageAreaId }Columns] 
-									(DisplayName, 
-									 ColumnType, 
-									 IsEditable,
-									 CreatedOn, 
-									 LastModified) 
+									([DisplayName], 
+									 [ColumnTypeID], 
+									 [IsEditable],
+									 [CreatedOn], 
+									 [LastModified]) 
 						VALUES      ('Last Modified', 
 									 7, 
 									 0,
