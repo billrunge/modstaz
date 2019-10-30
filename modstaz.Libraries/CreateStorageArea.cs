@@ -85,8 +85,6 @@ namespace modstaz.Libraries
 
 						CREATE TABLE [dbo].[{ storageAreaId }Rows](
 							[1] [int] IDENTITY(1,1) NOT NULL,
-							[2] [datetime] NOT NULL,
-							[3] [datetime] NOT NULL,
 						PRIMARY KEY CLUSTERED 
 						(
 							[1] ASC
@@ -145,51 +143,10 @@ namespace modstaz.Libraries
 
                 createColumn.ColumnTypeId = 8;
                 createColumn.DisplayName = "Created On";
+                createColumn.CreateColumnInRowsTable = true;
                 await createColumn.CreateColumnAsync();
                 createColumn.DisplayName = "Last Modified";
                 await createColumn.CreateColumnAsync();
-
-
-                //          sql = $@"
-                //INSERT INTO [{ storageAreaId }Columns] 
-                //			([DisplayName], 
-                //			 [ColumnTypeID],
-                //			 [IsEditable],
-                //			 [CreatedOn], 
-                //			 [LastModified]) 
-                //VALUES      ('ID', 
-                //			 2, 
-                //			 0,
-                //			 Getutcdate(), 
-                //			 Getutcdate()); 
-
-                //INSERT INTO [{ storageAreaId }Columns] 
-                //			([DisplayName], 
-                //			 [ColumnTypeID], 
-                //			 [IsEditable],
-                //			 [CreatedOn], 
-                //			 [LastModified]) 
-                //VALUES      ('Created On', 
-                //			 8, 
-                //			 0,
-                //			 Getutcdate(), 
-                //			 Getutcdate()); 
-
-                //INSERT INTO [{ storageAreaId }Columns] 
-                //			([DisplayName], 
-                //			 [ColumnTypeID], 
-                //			 [IsEditable],
-                //			 [CreatedOn], 
-                //			 [LastModified]) 
-                //VALUES      ('Last Modified', 
-                //			 8, 
-                //			 0,
-                //			 Getutcdate(), 
-                //			 Getutcdate()); ";
-
-                //          command = new SqlCommand(sql, connection);
-
-                //          await command.ExecuteNonQueryAsync();
             }
         }
 

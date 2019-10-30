@@ -7,8 +7,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System.Data.SqlClient;
-using System.Data;
 
 namespace modstaz
 {
@@ -25,26 +23,14 @@ namespace modstaz
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             int storageAreaId = data.StorageAreaID;
 
-            await DeleteStorageAreaAsync(storageAreaId);
+            Libraries.DeleteStorageArea delete = new Libraries.DeleteStorageArea()
+            {
+                StorageAreaId = storageAreaId
+            };
+
+            await delete.DeleteStorageAreaAsync();
 
             return (ActionResult)new OkObjectResult($"StorageArea with ID { storageAreaId } deleted successfully");
-        }
-
-
-        private static async Task DeleteStorageAreaAsync(int storageAreaId)
-        {
-            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
-            {
-                await connection.OpenAsync();
-                string sql = $@"
-                    DROP TABLE [{ storageAreaId }Columns]
-                    DROP TABLE [{ storageAreaId }Rows]
-                    DELETE FROM [StorageAreaAccess] WHERE StorageAreaID = @StorageAreaID
-                    DELETE FROM [StorageAreas] WHERE ID = @StorageAreaID";
-                SqlCommand command = new SqlCommand(sql, connection);
-                command.Parameters.Add(new SqlParameter { ParameterName = "@StorageAreaID", SqlDbType = SqlDbType.Int, Value = storageAreaId });
-                await command.ExecuteNonQueryAsync();
-            }
         }
     }
 
