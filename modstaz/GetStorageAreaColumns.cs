@@ -16,19 +16,15 @@ namespace modstaz
     {
         [FunctionName("GetStorageAreaColumns")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            if(!int.TryParse(req.Query["StorageAreaID"], out int storageAreaId))
-            {
-                throw new InvalidCastException("Unable to cast StorageAreaID from database into an int");
-            }
 
-            //string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            //dynamic data = JsonConvert.DeserializeObject(requestBody);
-            //name = name ?? data?.name;
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            dynamic data = JsonConvert.DeserializeObject(requestBody);
+            int storageAreaId = data.StorageAreaId;
 
             return (ActionResult)new OkObjectResult(await GetStorageAreaColumnsAsync(storageAreaId));
                 //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");

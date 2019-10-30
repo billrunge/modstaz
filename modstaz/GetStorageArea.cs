@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace modstaz
@@ -16,19 +17,19 @@ namespace modstaz
     {
         [FunctionName("GetStorageArea")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            if (!int.TryParse(req.Query["StorageAreaID"], out int storageAreaId))
-            {
-                throw new InvalidCastException("Unable to cast StorageAreaID from database to int");
-            }
+            //if (!int.TryParse(req.Query["StorageAreaID"], out int storageAreaId))
+            //{
+            //    throw new InvalidCastException("Unable to cast StorageAreaID from database to int");
+            //}
 
-            //string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            //dynamic data = JsonConvert.DeserializeObject(requestBody);
-            //name = name ?? data?.name;
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            dynamic data = JsonConvert.DeserializeObject(requestBody);
+            int storageAreaId = data.StorageAreaId;
 
             List<KeyValuePair<int, string>> idColumns = await GetColumnsAsync(storageAreaId);
             string result = await GetRowsAsync(storageAreaId, idColumns);
