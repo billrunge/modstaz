@@ -143,7 +143,7 @@ namespace modstaz
 									 [CreatedOn], 
 									 [LastModified]) 
 						VALUES      ('ID', 
-									 1, 
+									 2, 
 									 0,
 									 Getutcdate(), 
 									 Getutcdate()); 
@@ -155,7 +155,7 @@ namespace modstaz
 									 [CreatedOn], 
 									 [LastModified]) 
 						VALUES      ('Created On', 
-									 7, 
+									 8, 
 									 0,
 									 Getutcdate(), 
 									 Getutcdate()); 
@@ -167,7 +167,7 @@ namespace modstaz
 									 [CreatedOn], 
 									 [LastModified]) 
 						VALUES      ('Last Modified', 
-									 7, 
+									 8, 
 									 0,
 									 Getutcdate(), 
 									 Getutcdate()); ";
@@ -194,7 +194,7 @@ namespace modstaz
 									 [RoleID]) 
 						VALUES     (@UserID, 
 									@StorageAreaID, 
-									1) ";
+									2) ";
 
 				SqlCommand command = new SqlCommand(sql, connection);
 

@@ -13,7 +13,7 @@ namespace modstaz
     public static class GetStorageAreas
     {
         [FunctionName("GetStorageAreas")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req, ILogger log)
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req, ILogger log)
         {
             log.LogInformation("GetStorageAreas trigger function processed a request.");
 
