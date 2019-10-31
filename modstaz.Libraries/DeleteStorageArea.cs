@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace modstaz.Libraries
@@ -24,15 +22,34 @@ namespace modstaz.Libraries
             {
                 await connection.OpenAsync();
                 string sql = $@"
-                    DROP TABLE [{ StorageAreaId }Columns]
-                    DROP TABLE [{ StorageAreaId }Rows]
-                    DELETE FROM [StorageAreaAccess] WHERE StorageAreaID = @StorageAreaID
-                    DELETE FROM [StorageAreas] WHERE ID = @StorageAreaID";
+                    IF Object_id('{ StorageAreaId }Columns', 'U') IS NOT NULL 
+                      BEGIN 
+                          DROP TABLE [{ StorageAreaId }Columns] 
+                      END";
                 SqlCommand command = new SqlCommand(sql, connection);
+                await command.ExecuteNonQueryAsync();
+
+                sql = $@"
+                    IF Object_id('{ StorageAreaId }Rows', 'U') IS NOT NULL 
+                      BEGIN 
+                          DROP TABLE [{ StorageAreaId }Rows] 
+                      END";
+
+                command = new SqlCommand(sql, connection);
+                await command.ExecuteNonQueryAsync();
+
+                sql = $"DELETE FROM [StorageAreaAccess] WHERE StorageAreaID = @StorageAreaID";
+                command = new SqlCommand(sql, connection);
                 command.Parameters.Add(new SqlParameter { ParameterName = "@StorageAreaID", SqlDbType = SqlDbType.Int, Value = StorageAreaId });
                 await command.ExecuteNonQueryAsync();
+
+                sql = $"DELETE FROM [StorageAreas] WHERE ID = @StorageAreaID";
+
+                command = new SqlCommand(sql, connection);
+                command.Parameters.Add(new SqlParameter { ParameterName = "@StorageAreaID", SqlDbType = SqlDbType.Int, Value = StorageAreaId });
+                await command.ExecuteNonQueryAsync();
+
             }
         }
-
     }
 }
