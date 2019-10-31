@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using modstaz.Libraries;
 using Newtonsoft.Json;
 using System.IO;
 using System.Threading.Tasks;
@@ -22,9 +23,9 @@ namespace modstaz
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             int storageAreaId = data.StorageAreaId;
 
-            Libraries.GetStorageArea getSA = new Libraries.GetStorageArea() { StorageAreaId = storageAreaId };
+            StorageArea storageArea = new StorageArea() { StorageAreaId = storageAreaId };
 
-            string result = await getSA.GetStorageAreaAsync();
+            string result = await storageArea.GetStorageAreaAsync();
 
             return new OkObjectResult(result);
             //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");

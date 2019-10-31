@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using modstaz.Libraries;
 using Newtonsoft.Json;
 using System;
 using System.Data;
@@ -24,9 +25,9 @@ namespace modstaz
 
             int userId = data.UserId;
 
-            Libraries.GetStorageAreas getStorageAreas = new Libraries.GetStorageAreas() { UserId = userId };
+            StorageArea storageAreas = new StorageArea() { UserId = userId };
             
-            return new OkObjectResult(await getStorageAreas.GetStorsageAreasAsync());
+            return new OkObjectResult(await storageAreas.GetStorsageAreasAsync());
 
         }
     }
