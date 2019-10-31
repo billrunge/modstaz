@@ -7,10 +7,13 @@ using System.Threading.Tasks;
 namespace modstaz.Libraries
 {
     public class Setup
-    {        
+    {
+        public string SystemEmailAddress { get; set; } = "SYSTEM";
         public async Task CreateTablesAsync()
         {
+            User user = new User() { EmailAddress = SystemEmailAddress };
             await CreateUsersTable();
+            await user.CreateUser();
             await CreateStorageAreasTable();
             await CreateRolesTable();
             await SeedRolesTable();
