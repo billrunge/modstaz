@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using modstaz.Libraries;
 
 namespace modstaz
 {
@@ -26,14 +27,14 @@ namespace modstaz
             int columnTypeId = data.ColumnTypeID;
             string displayName = data.DisplayName;
 
-            Libraries.CreateColumn createColumn = new Libraries.CreateColumn()
+            Column column = new Column()
             {
                 StorageAreaId = storageAreaId,
                 ColumnTypeId = columnTypeId,
                 DisplayName = displayName
             };
 
-            await createColumn.CreateColumnAsync();
+            await column.CreateColumnAsync();
 
             return (ActionResult)new OkObjectResult($"Column created successfully");
             //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");

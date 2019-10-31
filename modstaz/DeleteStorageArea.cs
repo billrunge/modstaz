@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using modstaz.Libraries;
 
 namespace modstaz
 {
@@ -23,12 +24,12 @@ namespace modstaz
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             int storageAreaId = data.StorageAreaID;
 
-            Libraries.DeleteStorageArea delete = new Libraries.DeleteStorageArea()
+            StorageArea storageArea = new StorageArea()
             {
                 StorageAreaId = storageAreaId
             };
 
-            await delete.DeleteStorageAreaAsync();
+            await storageArea.DeleteStorageAreaAsync();
 
             return (ActionResult)new OkObjectResult($"StorageArea with ID { storageAreaId } deleted successfully");
         }

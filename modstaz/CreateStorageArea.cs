@@ -6,7 +6,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-
+using modstaz.Libraries;
 
 namespace modstaz
 {
@@ -25,13 +25,13 @@ namespace modstaz
             string name = data.StorageAreaName;
             int userId = data.UserId;
 
-            Libraries.CreateStorageArea create = new Libraries.CreateStorageArea()
+            StorageArea storageArea = new StorageArea()
             {
                 StorageAreaName = name,
                 UserId = userId
             };
 
-            await create.CreateStorageAreaAsync();
+            await storageArea.CreateStorageAreaAsync();
 
             return (ActionResult)new OkObjectResult($"storage area created");
             //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");

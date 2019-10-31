@@ -1,11 +1,14 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace modstaz.Libraries
 {
-    public class CreateColumn
+    public class Column
     {
         public string DisplayName { get; set; }
         public int StorageAreaId { get; set; }
@@ -15,14 +18,18 @@ namespace modstaz.Libraries
         public string SqlDataType { get; private set; }
         public bool CreateColumnInRowsTable { get; set; } = true;
 
-        public CreateColumn(string displayName, int storageAreaId, int columnTypeId, bool isEditable)
+        public Column(string displayName, int storageAreaId, int columnTypeId, bool isEditable)
         {
             DisplayName = displayName;
             StorageAreaId = storageAreaId;
             ColumnTypeId = columnTypeId;
             IsEditable = isEditable;
         }
-        public CreateColumn() { }
+        public Column(int storageAreaId)
+        {
+            StorageAreaId = storageAreaId;
+        }
+        public Column() { }
 
         public async Task CreateColumnAsync()
         {
@@ -33,6 +40,33 @@ namespace modstaz.Libraries
             if (CreateColumnInRowsTable)
             {
                 await CreateColumnInRowTableAsync();
+            }
+        }
+
+        public async Task<string> GetStorageAreaColumnsAsync()
+        {
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+
+                string sql = $@"
+                SELECT [ID], 
+                       [DisplayName], 
+                       [ColumnTypeID], 
+                       [IsEditable],
+                       [CreatedOn], 
+                       [LastModified] 
+                FROM   [{ StorageAreaId }Columns]";
+
+                SqlCommand command = new SqlCommand(sql, connection);
+
+                using (SqlDataReader dataReader = await command.ExecuteReaderAsync())
+                {
+                    DataTable dataTable = new DataTable();
+                    dataTable.Load(dataReader);
+
+                    return JsonConvert.SerializeObject(dataTable, Formatting.Indented);
+                }
             }
         }
 
@@ -80,7 +114,6 @@ namespace modstaz.Libraries
                 await command.ExecuteNonQueryAsync();
             }
         }
-
 
         async Task<string> GetSqlDataTypeFromColumnTypeId()
         {

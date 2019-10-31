@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
 using System.Data;
+using modstaz.Libraries;
 
 namespace modstaz
 {
@@ -26,9 +27,9 @@ namespace modstaz
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             int storageAreaId = data.StorageAreaId;
 
-            Libraries.GetStorageAreaColumns getColumns = new Libraries.GetStorageAreaColumns() { StorageAreaId = storageAreaId };
+            Column column = new Column() { StorageAreaId = storageAreaId };
 
-            return (ActionResult)new OkObjectResult(await getColumns.GetStorageAreaColumnsAsync());
+            return (ActionResult)new OkObjectResult(await column.GetStorageAreaColumnsAsync());
                 //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");
         }
     }
