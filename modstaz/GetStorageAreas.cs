@@ -19,44 +19,15 @@ namespace modstaz
         {
             log.LogInformation("GetStorageAreas trigger function processed a request.");
 
-            //if (!int.TryParse(req.Query["UserId"], out int userId))
-            //{
-            //    throw new InvalidCastException("Unable to cast UserId to int");
-            //}
-
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
 
             int userId = data.UserId;
 
-            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
-            {
-                connection.Open();
-                string sql = @"
-                        SELECT S.[ID], 
-                               S.[Name], 
-                               S.[CreatedBy], 
-                               S.[CreatedOn], 
-                               S.[LastModified] 
-                        FROM   [StorageAreas] S 
-                               INNER JOIN [StorageAreaAccess] SA 
-                                       ON SA.StorageAreaID = S.ID 
-                        WHERE  SA.UserID = @UserID";
+            Libraries.GetStorageAreas getStorageAreas = new Libraries.GetStorageAreas() { UserId = userId };
+            
+            return new OkObjectResult(await getStorageAreas.GetStorsageAreasAsync());
 
-                SqlCommand command = new SqlCommand(sql, connection);
-
-                command.Parameters.Add(new SqlParameter { ParameterName = "@UserID", SqlDbType = SqlDbType.Int, Value = userId });
-
-                using (SqlDataReader dataReader = command.ExecuteReader())
-                {
-                    DataTable dataTable = new DataTable();
-                    dataTable.Load(dataReader);
-
-                    string json = JsonConvert.SerializeObject(dataTable, Formatting.Indented);
-
-                    return new OkObjectResult(json);
-                }
-            }
         }
     }
 }
