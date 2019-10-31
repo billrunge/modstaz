@@ -29,24 +29,20 @@ namespace modstaz.Libraries
                 SqlCommand command = new SqlCommand(sql, connection);
                 await command.ExecuteNonQueryAsync();
 
-                sql = $@"
+                command.CommandText = $@"
                     IF Object_id('{ StorageAreaId }Rows', 'U') IS NOT NULL 
                       BEGIN 
                           DROP TABLE [{ StorageAreaId }Rows] 
                       END";
-
-                command = new SqlCommand(sql, connection);
+                
                 await command.ExecuteNonQueryAsync();
 
-                sql = $"DELETE FROM [StorageAreaAccess] WHERE StorageAreaID = @StorageAreaID";
-                command = new SqlCommand(sql, connection);
+                command.CommandText = $"DELETE FROM [StorageAreaAccess] WHERE StorageAreaID = @StorageAreaID";
+
                 command.Parameters.Add(new SqlParameter { ParameterName = "@StorageAreaID", SqlDbType = SqlDbType.Int, Value = StorageAreaId });
                 await command.ExecuteNonQueryAsync();
 
-                sql = $"DELETE FROM [StorageAreas] WHERE ID = @StorageAreaID";
-
-                command = new SqlCommand(sql, connection);
-                command.Parameters.Add(new SqlParameter { ParameterName = "@StorageAreaID", SqlDbType = SqlDbType.Int, Value = StorageAreaId });
+                command.CommandText = $"DELETE FROM [StorageAreas] WHERE ID = @StorageAreaID";
                 await command.ExecuteNonQueryAsync();
 
             }
