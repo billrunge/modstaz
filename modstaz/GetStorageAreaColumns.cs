@@ -26,39 +26,10 @@ namespace modstaz
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             int storageAreaId = data.StorageAreaId;
 
-            return (ActionResult)new OkObjectResult(await GetStorageAreaColumnsAsync(storageAreaId));
+            Libraries.GetStorageAreaColumns getColumns = new Libraries.GetStorageAreaColumns() { StorageAreaId = storageAreaId };
+
+            return (ActionResult)new OkObjectResult(await getColumns.GetStorageAreaColumnsAsync());
                 //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");
         }
-
-
-        private static async Task<string> GetStorageAreaColumnsAsync(int storageAreaId)
-        {
-            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
-            {
-                await connection.OpenAsync();
-
-                string sql = $@"
-                SELECT [ID], 
-                       [DisplayName], 
-                       [ColumnTypeID], 
-                       [IsEditable],
-                       [CreatedOn], 
-                       [LastModified] 
-                FROM   [{ storageAreaId }Columns]";
-
-                SqlCommand command = new SqlCommand(sql, connection);
-
-                using (SqlDataReader dataReader = await command.ExecuteReaderAsync())
-                {
-                    DataTable dataTable = new DataTable();
-                    dataTable.Load(dataReader);
-
-                    return JsonConvert.SerializeObject(dataTable, Formatting.Indented);
-                }
-
-            }
-
-        }
-
     }
 }
