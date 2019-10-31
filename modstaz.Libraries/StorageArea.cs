@@ -29,8 +29,8 @@ namespace modstaz.Libraries
             StorageAreaId = await CreateStorageAreaIdAsync(StorageAreaName, UserId);
             await CreateRowsTableAsync(StorageAreaId);
             await CreateColumnsTableAsync(StorageAreaId);
-            await AddAccessAsync(StorageAreaId, UserId);
-
+            Access access = new Access() { StorageAreaId = StorageAreaId, UserId = UserId };
+            await access.AddAccessAsync(StorageAreaId, UserId);
         }
 
         public async Task DeleteStorageAreaAsync()
@@ -285,31 +285,6 @@ namespace modstaz.Libraries
                 await column.CreateColumnAsync();
                 column.DisplayName = "Last Modified";
                 await column.CreateColumnAsync();
-            }
-        }
-
-        async Task AddAccessAsync(int storageAreaId, int userId)
-        {
-            using (SqlConnection connection = new SqlConnection())
-            {
-                connection.ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING");
-                await connection.OpenAsync();
-
-                string sql = $@"
-						INSERT INTO [StorageAreaAccess] 
-									([UserID], 
-									 [StorageAreaID], 
-									 [RoleID]) 
-						VALUES     (@UserID, 
-									@StorageAreaID, 
-									2) ";
-
-                SqlCommand command = new SqlCommand(sql, connection);
-
-                command.Parameters.Add(new SqlParameter { ParameterName = "@StorageAreaID", SqlDbType = SqlDbType.Int, Value = storageAreaId });
-                command.Parameters.Add(new SqlParameter { ParameterName = "@UserID", SqlDbType = SqlDbType.Int, Value = userId });
-
-                await command.ExecuteNonQueryAsync();
             }
         }
     }
