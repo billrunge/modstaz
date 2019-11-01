@@ -1,33 +1,35 @@
-﻿using System.Threading.Tasks;
+﻿//using Newtonsoft.Json.Linq;
+//using System.Threading.Tasks;
 
-namespace modstaz.Libraries
-{
-    public class Row
-    {
-        public int StorageAreaId { get; set; }
-        public object Fields { get; set; }
-
-
-        public async Task<string> InsertRowAsync()
-        {
-            //string columns = "";
-            //string values = "";
-
-
-
-            Column column = new Column() { StorageAreaId = StorageAreaId };
-
-            return Fields.ToString();
+//namespace modstaz.Libraries
+//{
+//    public class Row
+//    {
+//       public int StorageAreaId { get; set; }
+//        public async Task<string> InsertRowAsync(JArray fields)
+//        {
+//            string columns = "";
+//            string values = "";
+//            Column column = new Column() { StorageAreaId = StorageAreaId };
+//            string output = "";
 
 
+//            foreach (JObject field in fields)
+//            {
+//                output += field. + " ";
 
-            //string sql = $@"
-            //    INSERT INTO [{ StorageAreaId }Rows] 
-            //                ({ columns }) 
-            //    VALUES      ({ values })";
+//            }
+
+
+//            //return output;
 
 
 
-        }
-    }
-}
+//            //string sql = $@"
+//            //    INSERT INTO [{ StorageAreaId }Rows] 
+//            //                ({ columns }) 
+//            //    VALUES      ({ values })";
+
+//        }
+//    }
+//}

@@ -13,7 +13,7 @@ namespace modstaz.Libraries
         public string DisplayName { get; set; }
         public int StorageAreaId { get; set; }
         public int ColumnTypeId { get; set; }
-        public bool IsEditable { get; set; } = false;
+        public bool IsEditable { get; set; } = true;
         public int ColumnId { get; private set; }
         public string SqlDataType { get; private set; }
         public bool CreateColumnInRowsTable { get; set; } = true;
@@ -31,16 +31,15 @@ namespace modstaz.Libraries
         }
         public Column() { }
 
-        public async Task CreateColumnAsync()
+        public async Task<string> CreateColumnAsync()
         {
+            if (await DoesColumnExistAsync()) { return $"A column named '{ DisplayName }' already exists"; };
             ColumnId = 0;
             SqlDataType = String.Empty;
             ColumnId = await CreateColumnIdAsync();
             SqlDataType = await GetSqlDataTypeFromColumnTypeId();
-            if (CreateColumnInRowsTable)
-            {
-                await CreateColumnInRowTableAsync();
-            }
+            if (CreateColumnInRowsTable) { await CreateColumnInRowTableAsync(); }
+            return $"Column '{ DisplayName }' created successfully";
         }
 
         public async Task<string> GetStorageAreaColumnsAsync()
@@ -99,6 +98,28 @@ namespace modstaz.Libraries
 
                 return Convert.ToInt32(await command.ExecuteScalarAsync());
 
+            }
+        }
+
+        async Task<bool> DoesColumnExistAsync()
+        {
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+
+                string sql = $@"
+                    SELECT CASE 
+                             WHEN EXISTS (SELECT [ID] 
+                                          FROM   [{ StorageAreaId }Columns] 
+                                          WHERE  [DisplayName] = @DisplayName) THEN Cast(1 AS BIT) 
+                             ELSE Cast(0 AS BIT) 
+                           END";
+
+                SqlCommand command = new SqlCommand(sql, connection);
+
+                command.Parameters.Add(new SqlParameter { ParameterName = "@DisplayName", SqlDbType = SqlDbType.NVarChar, Value = DisplayName });
+
+                return (bool)await command.ExecuteScalarAsync();
             }
         }
 
