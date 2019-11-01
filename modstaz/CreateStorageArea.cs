@@ -24,6 +24,7 @@ namespace modstaz
 
             string name = data.StorageAreaName;
             int userId = data.UserId;
+            object fields = data.Fields;
 
             StorageArea storageArea = new StorageArea()
             {

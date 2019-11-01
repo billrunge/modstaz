@@ -23,8 +23,12 @@ namespace modstaz.Functions
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             int storageAreaId = data.StorageAreaId;
+            object fields = data.Fields;
 
-            Row row = new Row() { StorageAreaId = storageAreaId};
+            Row row = new Row() {
+                StorageAreaId = storageAreaId,
+                Fields = fields
+            };
             
 
             return new OkObjectResult(await row.InsertRowAsync());
