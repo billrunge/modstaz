@@ -11,6 +11,8 @@ using modstaz.Libraries;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace modstaz.Functions
 {
@@ -28,29 +30,64 @@ namespace modstaz.Functions
             int storageAreaId = data["StorageAreaId"];
             JObject fields = data.Fields;
 
-            List<string> inputKeys = fields.Properties().Select(x => x.Name.ToLower()).ToList();
+            List<ColumnObject> inputColumns = fields.Properties().Select(x => new ColumnObject { DisplayName = x.Name, Value = (string)x.Value }).ToList();
 
             Column column = new Column() { StorageAreaId = storageAreaId };
 
-            string colsString = await column.GetStorageAreaColumnsAsync();
+            JArray columnObj = (JArray)JsonConvert.DeserializeObject(await column.GetStorageAreaColumnsAsync());
 
-            JArray columnObj = (JArray)JsonConvert.DeserializeObject(colsString);
+            List<ColumnObject> columns = columnObj
+                .Where(x => (bool)x["IsEditable"] == true)
+                .Select(x => new ColumnObject { Id = (int)x["ID"], DisplayName = (string)x["DisplayName"] })
+                .ToList();
 
-            List<string> columnKeys = columnObj.Select(x => x["DisplayName"].ToString().ToLower() ).ToList();
+            List<ColumnObject> updateColumns = (from i in inputColumns
+                                               from c in columns.Where(x => i.DisplayName.ToLower() == x.DisplayName.ToLower() || i.DisplayName == x.Id.ToString())                                                               
+                                               select new ColumnObject() { Id = c.Id, DisplayName = c.DisplayName, Value = i.Value }).ToList();
 
-            //List<string> columnNames = columnObj.Properties().Select(x => x.).ToList();
+            string columnIds = "";
+            string values = "";
 
-
-            foreach (string key in columnKeys)
+            foreach (ColumnObject c in updateColumns)
             {
-                log.LogInformation(key);
+                columnIds += $" [{ c.Id }],";
+                values += $"'{ c.Value }',";
             }
 
-            return new OkObjectResult(fields);
+            columnIds = columnIds.TrimEnd(',');
+            values = values.TrimEnd(',');
+
+            string sql = $@"
+                INSERT INTO [{ storageAreaId }ROWS] 
+                ( { columnIds } )
+                VALUES ( { values } )";
+
+            await InsertRowSqlAsync(sql);
+
+            return new OkObjectResult(sql);
 
             //return name != null
             //    ? (ActionResult)new OkObjectResult($"Hello, {name}")
             //    : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
         }
+
+        static async Task InsertRowSqlAsync(string sql)
+        {
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+                SqlCommand command = new SqlCommand(sql, connection);
+                await command.ExecuteNonQueryAsync();
+
+            }
+        }
+
+    }
+
+    class ColumnObject
+    {
+        public int Id { get; set; }
+        public string DisplayName { get; set; }
+        public string Value { get; set; }
     }
 }

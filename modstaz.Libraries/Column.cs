@@ -13,7 +13,7 @@ namespace modstaz.Libraries
         public string DisplayName { get; set; }
         public int StorageAreaId { get; set; }
         public int ColumnTypeId { get; set; }
-        public bool IsEditable { get; set; } = false;
+        public bool IsEditable { get; set; } = true;
         public int ColumnId { get; private set; }
         public string SqlDataType { get; private set; }
         public bool CreateColumnInRowsTable { get; set; } = true;
