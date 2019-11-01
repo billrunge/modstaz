@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using modstaz.Libraries;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace modstaz.Functions
 {
@@ -22,12 +25,28 @@ namespace modstaz.Functions
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
-            int storageAreaId = data.StorageAreaId;
+            int storageAreaId = data["StorageAreaId"];
+            JObject fields = data.Fields;
 
-            Row row = new Row() { StorageAreaId = storageAreaId};
-            
+            List<string> inputKeys = fields.Properties().Select(x => x.Name.ToLower()).ToList();
 
-            return new OkObjectResult(await row.InsertRowAsync());
+            Column column = new Column() { StorageAreaId = storageAreaId };
+
+            string colsString = await column.GetStorageAreaColumnsAsync();
+
+            JArray columnObj = (JArray)JsonConvert.DeserializeObject(colsString);
+
+            List<string> columnKeys = columnObj.Select(x => x["DisplayName"].ToString().ToLower() ).ToList();
+
+            //List<string> columnNames = columnObj.Properties().Select(x => x.).ToList();
+
+
+            foreach (string key in columnKeys)
+            {
+                log.LogInformation(key);
+            }
+
+            return new OkObjectResult(fields);
 
             //return name != null
             //    ? (ActionResult)new OkObjectResult($"Hello, {name}")

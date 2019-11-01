@@ -250,7 +250,7 @@ namespace modstaz.Libraries
 						CREATE TABLE [dbo].[{ storageAreaId }Columns] 
 						  ( 
 							 [ID]           [int] IDENTITY(1, 1) NOT NULL, 
-							 [DisplayName]  [nvarchar](255) NOT NULL, 
+							 [DisplayName]  [nvarchar](255) NOT NULL UNIQUE, 
 							 [ColumnTypeID] [int] NOT NULL,
 							 [IsEditable]   [bit] NOT NULL, 
 							 [CreatedOn]    [datetime] NOT NULL, 
