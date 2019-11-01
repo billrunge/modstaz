@@ -14,25 +14,26 @@ namespace modstaz.Libraries
 
         public async Task<string> InsertRowAsync(JObject fields)
         {
-            List<ColumnObject> inputColumns = fields.Properties().Select(x => new ColumnObject { DisplayName = x.Name, Value = (string)x.Value }).ToList();
-
-            Column column = new Column() { StorageAreaId = StorageAreaId };
-
-            JArray columnObj = (JArray)JsonConvert.DeserializeObject(await column.GetStorageAreaColumnsAsync());
-
-            List<ColumnObject> columns = columnObj
-                .Where(x => (bool)x["IsEditable"] == true)
-                .Select(x => new ColumnObject { Id = (int)x["ID"], DisplayName = (string)x["DisplayName"] })
+            List<RowColumn> inputColumns = fields.Properties()
+                .Select(x => new RowColumn { DisplayName = x.Name, Value = (string)x.Value })
                 .ToList();
 
-            List<ColumnObject> updateColumns = (from i in inputColumns
+            Column column = new Column() { StorageAreaId = StorageAreaId };
+            JArray columnObj = (JArray)JsonConvert.DeserializeObject(await column.GetStorageAreaColumnsAsync());
+
+            List<RowColumn> columns = columnObj
+                .Where(x => (bool)x["IsEditable"] == true)
+                .Select(x => new RowColumn { Id = (int)x["ID"], DisplayName = (string)x["DisplayName"] })
+                .ToList();
+
+            List<RowColumn> updateColumns = (from i in inputColumns
                                                 from c in columns.Where(x => i.DisplayName.ToLower() == x.DisplayName.ToLower() || i.DisplayName == x.Id.ToString())
-                                                select new ColumnObject() { Id = c.Id, DisplayName = c.DisplayName, Value = i.Value }).ToList();
+                                                select new RowColumn() { Id = c.Id, DisplayName = c.DisplayName, Value = i.Value }).ToList();
 
             string columnIds = "";
             string values = "";
 
-            foreach (ColumnObject c in updateColumns)
+            foreach (RowColumn c in updateColumns)
             {
                 columnIds += $" [{ c.Id }],";
                 values += $"'{ c.Value }',";
@@ -46,14 +47,6 @@ namespace modstaz.Libraries
                 ( { columnIds } )
                 VALUES ( { values } )";
 
-            await InsertRowSqlAsync(sql);
-
-            return sql;
-
-        }
-
-        static async Task InsertRowSqlAsync(string sql)
-        {
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
             {
                 await connection.OpenAsync();
@@ -61,12 +54,14 @@ namespace modstaz.Libraries
                 await command.ExecuteNonQueryAsync();
 
             }
+
+            return sql;
+
         }
 
 
 
-
-        class ColumnObject
+        class RowColumn
         {
             public int Id { get; set; }
             public string DisplayName { get; set; }
