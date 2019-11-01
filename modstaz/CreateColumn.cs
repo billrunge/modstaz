@@ -32,11 +32,9 @@ namespace modstaz
                 StorageAreaId = storageAreaId,
                 ColumnTypeId = columnTypeId,
                 DisplayName = displayName
-            };
+            };            
 
-            await column.CreateColumnAsync();
-
-            return (ActionResult)new OkObjectResult($"Column created successfully");
+            return (ActionResult)new OkObjectResult(await column.CreateColumnAsync());
             //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");
         }
     }
