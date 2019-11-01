@@ -174,6 +174,12 @@ namespace modstaz.Libraries
         {
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
             {
+                string values = "";
+
+                //ColumnType columnType = new 
+
+
+
                 await connection.OpenAsync();
                 string sql = $@"
                     IF Object_id('ColumnTypes', 'U') IS NOT NULL 
