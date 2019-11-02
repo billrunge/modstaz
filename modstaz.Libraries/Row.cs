@@ -11,7 +11,6 @@ namespace modstaz.Libraries
     public class Row
     {
         public int StorageAreaId { get; set; }
-
         public async Task<string> InsertRowAsync(JObject fields)
         {
             List<RowColumn> inputColumns = fields.Properties()
@@ -30,8 +29,8 @@ namespace modstaz.Libraries
                                              from c in columns.Where(x => i.DisplayName.ToLower() == x.DisplayName.ToLower() || i.DisplayName == x.Id.ToString())
                                              select new RowColumn() { Id = c.Id, DisplayName = c.DisplayName, Value = i.Value, ColumnTypeId = c.ColumnTypeId }).ToList();
 
-            string columnIds = "";
-            string values = "";
+            string columnIds = string.Empty;
+            string values = string.Empty;
 
             foreach (RowColumn c in updateColumns)
             {

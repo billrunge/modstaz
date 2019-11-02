@@ -150,7 +150,7 @@ namespace modstaz.Libraries
         }   
         private async Task SeedRolesTable()
         {
-            string values = "";
+            string values = string.Empty;
 
             UserRole userRole = new UserRole();
             List<Role> roles = userRole.RolesList;
@@ -235,7 +235,7 @@ namespace modstaz.Libraries
         }
         private async Task SeedColumnTypesTable()
         {
-            string values = "";
+            string values = string.Empty;
 
             ColumnType columnType = new ColumnType();
             List<ColumnType.Type> types = columnType.TypesList;
