@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace modstaz.Libraries
 {
-    class User
+    public class User
     {
         public string EmailAddress { get; set; }
 
@@ -44,5 +44,29 @@ namespace modstaz.Libraries
                 }
             }
         }
+        public async Task<bool> DoesUserExistAsync()
+        {
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+
+                string sql = $@"
+                    SELECT CASE 
+                             WHEN EXISTS (SELECT [ID] 
+                                          FROM   [Users] 
+                                          WHERE  [EmailAddress] = @EmailAddress) THEN Cast(1 AS BIT) 
+                             ELSE Cast(0 AS BIT) 
+                           END";
+
+                SqlCommand command = new SqlCommand(sql, connection);
+
+                command.Parameters.Add(new SqlParameter { ParameterName = "@EmailAddress", SqlDbType = SqlDbType.NVarChar, Value = EmailAddress });
+
+                return (bool)await command.ExecuteScalarAsync();
+            }
+        }
+
+
+
     }
 }

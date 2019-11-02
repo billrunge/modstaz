@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using modstaz.Libraries;
 
 namespace modstaz.Functions
 {
@@ -22,12 +23,19 @@ namespace modstaz.Functions
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
 
+            User user = new User()
+            {
+                EmailAddress = data.EmailAddress
+            };
 
+            if (await user.DoesUserExistAsync())
+            {
+                return (ActionResult)new OkObjectResult($"A user with the email address { data.EmailAddress } already exists.");
+            }
 
-            name = name ?? data?.name;
+            await user.CreateUser();              
 
-            return (ActionResult)new OkObjectResult($"Hello");
-                //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+            return (ActionResult)new OkObjectResult($"User created successfully.");
         }
     }
 }

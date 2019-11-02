@@ -103,7 +103,7 @@ namespace modstaz.Libraries
                       BEGIN 
                           CREATE TABLE [StorageAreas] 
                             ( 
-                               [ID]           [int] IDENTITY(1, 1) NOT NULL, 
+                               [ID]           [INT] IDENTITY(1, 1) NOT NULL, 
                                [Name]         [NVARCHAR](255) NOT NULL, 
                                [CreatedBy]    [INT] FOREIGN KEY REFERENCES Users(ID), 
                                [CreatedOn]    [DATETIME] NOT NULL, 
@@ -132,7 +132,7 @@ namespace modstaz.Libraries
                       BEGIN 
                           CREATE TABLE [Roles] 
                             ( 
-                               [ID]   [int] IDENTITY(1, 1) NOT NULL, 
+                               [ID]   [INT] IDENTITY(1, 1) NOT NULL, 
                                [Name] [NVARCHAR](255) NOT NULL, 
                                CONSTRAINT [PK_Roles] PRIMARY KEY CLUSTERED ( [ID] ASC ) WITH ( 
                                PAD_INDEX = 
@@ -189,7 +189,7 @@ namespace modstaz.Libraries
                       BEGIN 
                           CREATE TABLE [StorageAreaAccess] 
                             ( 
-                               [ID]            [int] IDENTITY(1, 1) NOT NULL, 
+                               [ID]            [INT] IDENTITY(1, 1) NOT NULL, 
                                [UserID]        [INT] FOREIGN KEY REFERENCES Users(ID), 
                                [StorageAreaID] [INT] FOREIGN KEY REFERENCES StorageAreas(ID), 
                                [RoleID]        [INT] FOREIGN KEY REFERENCES Roles(ID), 
