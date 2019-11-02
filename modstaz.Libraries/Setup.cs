@@ -7,6 +7,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 using System.Threading.Tasks;
+using static modstaz.Libraries.UserRole;
 
 namespace modstaz.Libraries
 {
@@ -147,30 +148,66 @@ namespace modstaz.Libraries
                 await command.ExecuteNonQueryAsync();
             }
         }
+        //private async Task SeedRolesTable()
+        //{
+        //    using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+        //    {
+        //        string sql = $@"
+        //            IF Object_id('Roles', 'U') IS NOT NULL 
+        //               AND NOT EXISTS (SELECT * 
+        //                               FROM   [Roles]) 
+        //              BEGIN 
+        //                  INSERT INTO [Roles] 
+        //                              ([Name]) 
+        //                  VALUES      ('Super User'), 
+        //                              ('Creator'), 
+        //                              ('Delete'), 
+        //                              ('Edit'), 
+        //                              ('Add'), 
+        //                              ('View') 
+        //              END";
+
+        //        await connection.OpenAsync();
+        //        SqlCommand command = new SqlCommand(sql, connection);
+        //        await command.ExecuteNonQueryAsync();
+        //    }
+        //}
         private async Task SeedRolesTable()
         {
-            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            string values = "";
+
+            //ColumnType columnType = new ColumnType();
+            UserRole userRole = new UserRole();
+            //List<Type> types = new List<Type>();
+            List<Role> roles = userRole.Roles;
+
+            foreach (Role role in roles)
             {
-                string sql = $@"
+                values += $@" ('{ role.Name }'),";
+            }
+
+            values = values.TrimEnd(',');
+
+            string sql = $@"
                     IF Object_id('Roles', 'U') IS NOT NULL 
-                       AND NOT EXISTS (SELECT * 
+                       AND NOT EXISTS (SELECT TOP 1 [ID] 
                                        FROM   [Roles]) 
                       BEGIN 
                           INSERT INTO [Roles] 
                                       ([Name]) 
-                          VALUES      ('Super User'), 
-                                      ('Creator'), 
-                                      ('Delete'), 
-                                      ('Edit'), 
-                                      ('Add'), 
-                                      ('View') 
+                          VALUES      { values }
                       END";
 
+            Log.LogInformation(sql);
+
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
                 await connection.OpenAsync();
                 SqlCommand command = new SqlCommand(sql, connection);
                 await command.ExecuteNonQueryAsync();
             }
         }
+
         private async Task CreateStorageAreaAcessTable()
         {
             string sql = $@"
@@ -232,7 +269,7 @@ namespace modstaz.Libraries
 
             foreach (Type type in types)
             {
-                values += $@"('{ type.Name }', '{ type.SqlDataType }'),";
+                values += $@" ('{ type.Name }', '{ type.SqlDataType }'),";
             }
 
             values = values.TrimEnd(',');
@@ -257,10 +294,5 @@ namespace modstaz.Libraries
                 await command.ExecuteNonQueryAsync();
             }
         }
-
-
-
-
-
     }
 }
