@@ -81,7 +81,7 @@ namespace modstaz.Libraries
                           CREATE TABLE [Users] 
                             ( 
                                [ID]           [INT] IDENTITY(1, 1) NOT NULL, 
-                               [EmailAddress] [NVARCHAR](255) NOT NULL, 
+                               [EmailAddress] [NVARCHAR](255) NOT NULL UNIQUE, 
                                [CreatedOn]    [DATETIME] NOT NULL, 
                                CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED ( [ID] ASC )WITH ( 
                                PAD_INDEX 
@@ -147,38 +147,12 @@ namespace modstaz.Libraries
                 SqlCommand command = new SqlCommand(sql, connection);
                 await command.ExecuteNonQueryAsync();
             }
-        }
-        //private async Task SeedRolesTable()
-        //{
-        //    using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
-        //    {
-        //        string sql = $@"
-        //            IF Object_id('Roles', 'U') IS NOT NULL 
-        //               AND NOT EXISTS (SELECT * 
-        //                               FROM   [Roles]) 
-        //              BEGIN 
-        //                  INSERT INTO [Roles] 
-        //                              ([Name]) 
-        //                  VALUES      ('Super User'), 
-        //                              ('Creator'), 
-        //                              ('Delete'), 
-        //                              ('Edit'), 
-        //                              ('Add'), 
-        //                              ('View') 
-        //              END";
-
-        //        await connection.OpenAsync();
-        //        SqlCommand command = new SqlCommand(sql, connection);
-        //        await command.ExecuteNonQueryAsync();
-        //    }
-        //}
+        }   
         private async Task SeedRolesTable()
         {
             string values = "";
 
-            //ColumnType columnType = new ColumnType();
             UserRole userRole = new UserRole();
-            //List<Type> types = new List<Type>();
             List<Role> roles = userRole.Roles;
 
             foreach (Role role in roles)
@@ -264,8 +238,7 @@ namespace modstaz.Libraries
             string values = "";
 
             ColumnType columnType = new ColumnType();
-            List<Type> types = new List<Type>();
-            types = columnType.Types;
+            List<Type> types = columnType.Types;
 
             foreach (Type type in types)
             {
