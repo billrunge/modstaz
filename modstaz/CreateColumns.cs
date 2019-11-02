@@ -30,32 +30,16 @@ namespace modstaz
 
             foreach (JObject c in columnArray)
             {
-                //int columnTypeId = (int)c["ColumnTypeID"];
-                //string displayName = (string)c["DisplayName"];
-
                 Column column = new Column()
                 {
                     StorageAreaId = storageAreaId,
                     ColumnTypeId = (int)c["ColumnTypeID"],
-                    DisplayName = (string)c["DisplayName"]                    
+                    DisplayName = (string)c["DisplayName"]
                 };
                 await column.CreateColumnAsync();
-
             }
 
-
-            //int columnTypeId = data.ColumnTypeID;
-            //string displayName = data.DisplayName;
-
-            //Column column = new Column()
-            //{
-            //    StorageAreaId = storageAreaId,
-            //    ColumnTypeId = columnTypeId,
-            //    DisplayName = displayName
-            //};            
-
             return (ActionResult)new OkObjectResult("Columns created successfully.");
-            //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");
         }
     }
 }
