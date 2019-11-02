@@ -12,7 +12,7 @@ namespace modstaz.Libraries
         public int StorageAreaId { get; set; }
         public int UserId { get; set; }
 
-        public async Task AddAccessAsync(int storageAreaId, int userId)
+        public async Task AddAccessAsync(int storageAreaId, int userId, int roleId)
         {
             using (SqlConnection connection = new SqlConnection())
             {
@@ -26,12 +26,13 @@ namespace modstaz.Libraries
 									 [RoleID]) 
 						VALUES     (@UserID, 
 									@StorageAreaID, 
-									2) ";
+									@RoleID) ";
 
                 SqlCommand command = new SqlCommand(sql, connection);
 
                 command.Parameters.Add(new SqlParameter { ParameterName = "@StorageAreaID", SqlDbType = SqlDbType.Int, Value = StorageAreaId });
                 command.Parameters.Add(new SqlParameter { ParameterName = "@UserID", SqlDbType = SqlDbType.Int, Value = UserId });
+                command.Parameters.Add(new SqlParameter { ParameterName = "@RoleID", SqlDbType = SqlDbType.Int, Value = roleId });
 
                 await command.ExecuteNonQueryAsync();
             }

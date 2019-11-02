@@ -153,7 +153,7 @@ namespace modstaz.Libraries
             string values = "";
 
             UserRole userRole = new UserRole();
-            List<Role> roles = userRole.Roles;
+            List<Role> roles = userRole.RolesList;
 
             foreach (Role role in roles)
             {

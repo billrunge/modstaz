@@ -1,24 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace modstaz.Libraries
 {
     public class UserRole
     {
-        public List<Role> Roles { get; set; }
+        public List<Role> RolesList { get; set; }
 
         public UserRole()
         {
-            Roles = new List<Role>()
+            RolesList = new List<Role>()
             {
-                new Role() {Id = 1, Name = "Super User"},
-                new Role() {Id = 2, Name = "Creator"},
-                new Role() {Id = 3, Name = "Delete"},
-                new Role() {Id = 4, Name = "Edit"},
-                new Role() {Id = 5, Name = "Add"},
-                new Role() {Id = 6, Name = "View"}
+                new Role() {Id = (int)Roles.SuperUser, Name = "SuperUser"},
+                new Role() {Id = (int)Roles.Creator, Name = "Creator"},
+                new Role() {Id = (int)Roles.Delete, Name = "Delete"},
+                new Role() {Id = (int)Roles.Edit, Name = "Edit"},
+                new Role() {Id = (int)Roles.Add, Name = "Add"},
+                new Role() {Id = (int)Roles.View, Name = "View"}
             };
+        }
+
+        public int GetRoleIdByName(string name)
+        {
+            return RolesList
+                .Where(x => x.Name.ToLower() == name.ToLower() )
+                .Select(x => x.Id)
+                .First();
+        }
+
+        public enum Roles
+        {
+            SuperUser = 1,
+            Creator = 2,
+            Delete = 3,
+            Edit = 4,
+            Add = 5,
+            View = 6
         }
 
 

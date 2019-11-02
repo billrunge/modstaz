@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 using System.Threading.Tasks;
+using static modstaz.Libraries.UserRole;
 
 namespace modstaz.Libraries
 {
@@ -30,7 +31,8 @@ namespace modstaz.Libraries
             await CreateRowsTableAsync(StorageAreaId);
             await CreateColumnsTableAsync(StorageAreaId);
             Access access = new Access() { StorageAreaId = StorageAreaId, UserId = UserId };
-            await access.AddAccessAsync(StorageAreaId, UserId);
+            UserRole roles = new UserRole();
+            await access.AddAccessAsync(StorageAreaId, UserId, (int)Roles.Creator);
         }
 
         public async Task DeleteStorageAreaAsync()
@@ -94,8 +96,6 @@ namespace modstaz.Libraries
                 }
             }
         }
-
-
         public async Task<string> GetStorsageAreasByUserIdAsync()
         {
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
@@ -167,7 +167,6 @@ namespace modstaz.Libraries
                 }
             }
         }
-
         private async Task<string> GetRowsAsync(List<KeyValuePair<int, string>> idColumn)
         {
             string columnString = $"[{ idColumn[idColumn.Count - 1].Key.ToString() }] AS [{ idColumn[idColumn.Count - 1].Value }]";
@@ -196,7 +195,6 @@ namespace modstaz.Libraries
                 }
             }
         }
-
         async Task<int> CreateStorageAreaIdAsync(string name, int userId)
         {
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
@@ -233,7 +231,6 @@ namespace modstaz.Libraries
             }
 
         }
-
         async Task CreateRowsTableAsync(int storageAreaId)
         {
             using (SqlConnection connection = new SqlConnection())
@@ -260,7 +257,6 @@ namespace modstaz.Libraries
 
             }
         }
-
         async Task CreateColumnsTableAsync(int storageAreaId)
         {
             using (SqlConnection connection = new SqlConnection())
