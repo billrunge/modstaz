@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29001.49
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "modstaz.Functions", "modstaz\modstaz.Functions.csproj", "{FA7B0705-B7D1-4E5A-874F-05D48FD84F66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "modstaz.Libraries", "modstaz.Libraries\modstaz.Libraries.csproj", "{FF743036-EF1A-4ED6-9E24-CB7685E8DBB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "modstaz.Libraries", "modstaz.Libraries\modstaz.Libraries.csproj", "{FF743036-EF1A-4ED6-9E24-CB7685E8DBB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

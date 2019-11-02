@@ -27,7 +27,7 @@ namespace modstaz
 
             StorageArea storageAreas = new StorageArea() { UserId = userId };
             
-            return new OkObjectResult(await storageAreas.GetStorsageAreasAsync());
+            return new OkObjectResult(await storageAreas.GetStorsageAreasByUserIdAsync());
 
         }
     }

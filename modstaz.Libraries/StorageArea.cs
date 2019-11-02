@@ -69,10 +69,35 @@ namespace modstaz.Libraries
         {
             return await GetRowsAsync(await GetColumnsAsync());
         }
-
         public async Task<string> GetStorsageAreasAsync()
         {
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
 
+                string sql = @"
+                        SELECT [ID], 
+                               [Name], 
+                               [CreatedBy], 
+                               [CreatedOn], 
+                               [LastModified] 
+                        FROM   [StorageAreas]";
+
+                SqlCommand command = new SqlCommand(sql, connection);
+
+                using (SqlDataReader dataReader = await command.ExecuteReaderAsync())
+                {
+                    DataTable dataTable = new DataTable();
+                    dataTable.Load(dataReader);
+
+                    return JsonConvert.SerializeObject(dataTable, Formatting.Indented);
+                }
+            }
+        }
+
+
+        public async Task<string> GetStorsageAreasByUserIdAsync()
+        {
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
             {
                 await connection.OpenAsync();

@@ -1,6 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +14,7 @@ namespace modstaz.Libraries
     {
         public string SystemEmailAddress { get; set; } = "SYSTEM";
         public ILogger Log { get; set; }
+        public int StorageAreaId { get; set; }
         public async Task CreateTablesAsync()
         {
             User user = new User() { EmailAddress = SystemEmailAddress };
@@ -22,6 +26,47 @@ namespace modstaz.Libraries
             await CreateStorageAreaAcessTable();
             await CreateColumnTypesTable();
             await SeedColumnTypesTable();
+        }
+
+        public async Task DropAllModstazTables()
+        {
+            StorageArea storageArea = new StorageArea();
+            JArray storageAreas = (JArray)JsonConvert.DeserializeObject(await storageArea.GetStorsageAreasAsync());
+
+            foreach (JObject s in storageAreas)
+            {
+                storageArea.StorageAreaId = (int)s["ID"];
+                await storageArea.DeleteStorageAreaAsync();
+            }
+
+            List<string> tables = new List<string>
+            {
+                "StorageAreaAccess",
+                "Roles",
+                "ColumnTypes",
+                "StorageAreas",
+                "Users"
+            };
+
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+                foreach (string table in tables)
+                {
+                    SqlCommand command = new SqlCommand(CreateDropTableString(table), connection);
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        private string CreateDropTableString(string tableName)
+        {
+            return $@"
+                    IF Object_id('{ tableName }', 'U') IS NOT NULL 
+                      BEGIN 
+                          DROP TABLE [{tableName}] 
+                      END";
+
         }
 
         private async Task CreateUsersTable()
@@ -212,5 +257,10 @@ namespace modstaz.Libraries
                 await command.ExecuteNonQueryAsync();
             }
         }
+
+
+
+
+
     }
 }
