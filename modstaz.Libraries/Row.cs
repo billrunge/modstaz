@@ -55,6 +55,51 @@ namespace modstaz.Libraries
 
             return sql;
         }
+        //not done
+        public async Task<string> EditRowAsync(JObject fields)
+        {
+            List<RowColumn> inputColumns = fields.Properties()
+                .Select(x => new RowColumn { DisplayName = x.Name, Value = (string)x.Value })
+                .ToList();
+
+            Column column = new Column() { StorageAreaId = StorageAreaId };
+            JArray columnObj = (JArray)JsonConvert.DeserializeObject(await column.GetStorageAreaColumnsAsync());
+
+            List<RowColumn> columns = columnObj
+                .Where(x => (bool)x["IsEditable"] == true)
+                .Select(x => new RowColumn { Id = (int)x["ID"], DisplayName = (string)x["DisplayName"] })
+                .ToList();
+
+            List<RowColumn> updateColumns = (from i in inputColumns
+                                             from c in columns.Where(x => (i.DisplayName.ToLower() == x.DisplayName.ToLower() || i.DisplayName == x.Id.ToString()))
+                                             select new RowColumn() { Id = c.Id, DisplayName = c.DisplayName, Value = i.Value, ColumnTypeId = c.ColumnTypeId }).ToList();
+
+            string columnIds = string.Empty;
+            string values = string.Empty;
+
+            foreach (RowColumn c in updateColumns)
+            {
+                columnIds += $" [{ c.Id }],";
+                values += $"'{ c.Value }',";
+            }
+
+            columnIds = columnIds.TrimEnd(',');
+            values = values.TrimEnd(',');
+
+            string sql = $@"
+                INSERT INTO [{ StorageAreaId }ROWS] 
+                            ({ columnIds }) 
+                VALUES      ( { values } ) ";
+
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+                SqlCommand command = new SqlCommand(sql, connection);
+                await command.ExecuteNonQueryAsync();
+            }
+
+            return sql;
+        }
 
         class RowColumn
         {
