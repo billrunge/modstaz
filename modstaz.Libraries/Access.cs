@@ -26,7 +26,7 @@ namespace modstaz.Libraries
 									 [RoleID]) 
 						VALUES     (@UserID, 
 									@StorageAreaID, 
-									@RoleID) ";
+									@RoleID)";
 
                 SqlCommand command = new SqlCommand(sql, connection);
 

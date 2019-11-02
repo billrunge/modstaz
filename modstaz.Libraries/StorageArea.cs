@@ -31,7 +31,6 @@ namespace modstaz.Libraries
             await CreateRowsTableAsync(StorageAreaId);
             await CreateColumnsTableAsync(StorageAreaId);
             Access access = new Access() { StorageAreaId = StorageAreaId, UserId = UserId };
-            UserRole roles = new UserRole();
             await access.AddAccessAsync(StorageAreaId, UserId, (int)Roles.Creator);
         }
 
@@ -270,12 +269,12 @@ namespace modstaz.Libraries
 
 						CREATE TABLE [dbo].[{ storageAreaId }Columns] 
 						  ( 
-							 [ID]           [int] IDENTITY(1, 1) NOT NULL, 
-							 [DisplayName]  [nvarchar](255) NOT NULL UNIQUE, 
-							 [ColumnTypeID] [int] NOT NULL,
-							 [IsEditable]   [bit] NOT NULL, 
-							 [CreatedOn]    [datetime] NOT NULL, 
-							 [LastModified] [datetime] NOT NULL, 
+							 [ID]           [INT] IDENTITY(1, 1) NOT NULL, 
+							 [DisplayName]  [NVARCHAR](255) NOT NULL UNIQUE, 
+							 [ColumnTypeID] [INT] NOT NULL,
+							 [IsEditable]   [BIT] NOT NULL, 
+							 [CreatedOn]    [DATETIME] NOT NULL, 
+							 [LastModified] [DATETIME] NOT NULL, 
 							 PRIMARY KEY CLUSTERED ( [ID] ASC )WITH (STATISTICS_NORECOMPUTE = OFF, 
 							 IGNORE_DUP_KEY = OFF) ON [PRIMARY] 
 						  ) 
@@ -294,13 +293,13 @@ namespace modstaz.Libraries
                 {
                     StorageAreaId = storageAreaId,
                     IsEditable = false,
-                    ColumnTypeId = 2,
+                    ColumnTypeId = (int)ColumnType.Types.Integer,
                     DisplayName = "ID",
                     CreateColumnInRowsTable = false
                 };
                 await column.CreateColumnAsync();
 
-                column.ColumnTypeId = 8;
+                column.ColumnTypeId = (int)ColumnType.Types.DateTime;
                 column.DisplayName = "Created On";
                 column.CreateColumnInRowsTable = true;
                 await column.CreateColumnAsync();

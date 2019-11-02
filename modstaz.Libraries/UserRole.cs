@@ -13,7 +13,7 @@ namespace modstaz.Libraries
         {
             RolesList = new List<Role>()
             {
-                new Role() {Id = (int)Roles.SuperUser, Name = "SuperUser"},
+                new Role() {Id = (int)Roles.SuperUser, Name = "Super User"},
                 new Role() {Id = (int)Roles.Creator, Name = "Creator"},
                 new Role() {Id = (int)Roles.Delete, Name = "Delete"},
                 new Role() {Id = (int)Roles.Edit, Name = "Edit"},
@@ -21,15 +21,6 @@ namespace modstaz.Libraries
                 new Role() {Id = (int)Roles.View, Name = "View"}
             };
         }
-
-        public int GetRoleIdByName(string name)
-        {
-            return RolesList
-                .Where(x => x.Name.ToLower() == name.ToLower() )
-                .Select(x => x.Id)
-                .First();
-        }
-
         public enum Roles
         {
             SuperUser = 1,
@@ -39,8 +30,6 @@ namespace modstaz.Libraries
             Add = 5,
             View = 6
         }
-
-
         public class Role
         {
             public int Id { get; set; }

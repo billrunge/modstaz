@@ -114,7 +114,7 @@ namespace modstaz.Libraries
                                ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) 
                             ) 
                           ON [PRIMARY] 
-                      END ";
+                      END";
 
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
             {
@@ -141,7 +141,7 @@ namespace modstaz.Libraries
                                ON, ALLOW_PAGE_LOCKS = ON) 
                             ) 
                           ON [PRIMARY] 
-                      END ";
+                      END";
 
                 await connection.OpenAsync();
                 SqlCommand command = new SqlCommand(sql, connection);
@@ -238,9 +238,9 @@ namespace modstaz.Libraries
             string values = "";
 
             ColumnType columnType = new ColumnType();
-            List<Type> types = columnType.Types;
+            List<ColumnType.Type> types = columnType.TypesList;
 
-            foreach (Type type in types)
+            foreach (ColumnType.Type type in types)
             {
                 values += $@" ('{ type.Name }', '{ type.SqlDataType }'),";
             }

@@ -7,7 +7,7 @@ namespace modstaz.Libraries
     class ColumnType
     {
 
-        public List<Type> Types { get; set; }
+        public List<Type> TypesList { get; set; }
 
         public ColumnType()
         {
@@ -16,25 +16,36 @@ namespace modstaz.Libraries
 
         private void CreateTypesList()
         {
-            Types = new List<Type>()
+            TypesList = new List<Type>()
             {
-                new Type { Id = 1, Name = "Yes/No", SqlDataType = "BIT" },
-                new Type { Id = 2, Name = "Integer", SqlDataType = "INT" },
-                new Type { Id = 3, Name = "Decimal", SqlDataType = "FLOAT" },
-                new Type { Id = 4, Name = "Small Text", SqlDataType = "NVARCHAR(255)" },
-                new Type { Id = 5, Name = "Big Text", SqlDataType = "NVARCHAR(MAX)" },
-                new Type { Id = 6, Name = "GUID", SqlDataType = "UNIQUEIDENTIFIER" },
-                new Type { Id = 7, Name = "XML", SqlDataType = "XML" },
-                new Type { Id = 8, Name = "Date/Time", SqlDataType = "DATETIME" }
+                new Type { Id = (int)Types.YesNo, Name = "Yes/No", SqlDataType = "BIT" },
+                new Type { Id = (int)Types.Integer, Name = "Integer", SqlDataType = "INT" },
+                new Type { Id = (int)Types.Decimal, Name = "Decimal", SqlDataType = "FLOAT" },
+                new Type { Id = (int)Types.SmallText, Name = "Small Text", SqlDataType = "NVARCHAR(255)" },
+                new Type { Id = (int)Types.BigText, Name = "Big Text", SqlDataType = "NVARCHAR(MAX)" },
+                new Type { Id = (int)Types.GUID, Name = "GUID", SqlDataType = "UNIQUEIDENTIFIER" },
+                new Type { Id = (int)Types.XML, Name = "XML", SqlDataType = "XML" },
+                new Type { Id = (int)Types.DateTime, Name = "Date/Time", SqlDataType = "DATETIME" }
             };
         }
-    }
 
-    class Type
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string SqlDataType { get; set; }
-    }
+        public enum Types
+        {
+            YesNo = 1,
+            Integer = 2,
+            Decimal = 3,
+            SmallText = 4,
+            BigText = 5,
+            GUID = 6,
+            XML = 7,
+            DateTime = 8
+        }
 
+        public class Type
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public string SqlDataType { get; set; }
+        }
+    }
 }
