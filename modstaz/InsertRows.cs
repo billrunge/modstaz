@@ -31,7 +31,6 @@ namespace modstaz.Functions
             {
                 await row.InsertRowAsync(fields);
             }
-
             return new OkObjectResult("Fields inserted successfully.");
         }
     }
