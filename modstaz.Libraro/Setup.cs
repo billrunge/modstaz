@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Text;
@@ -10,7 +9,7 @@ namespace modstaz.Libraries
     public class Setup
     {
         public string SystemEmailAddress { get; set; } = "SYSTEM";
-        public ILogger Log { get; set; }
+        //public ILogger Log { get; set; }
         public async Task CreateTablesAsync()
         {
             User user = new User() { EmailAddress = SystemEmailAddress };
@@ -52,7 +51,10 @@ namespace modstaz.Libraries
         }
         private async Task CreateStorageAreasTable()
         {
-            string sql = $@"
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+                string sql = $@"
                     IF Object_id('StorageAreas', 'U') IS NULL 
                       BEGIN 
                           CREATE TABLE [StorageAreas] 
@@ -69,10 +71,6 @@ namespace modstaz.Libraries
                             ) 
                           ON [PRIMARY] 
                       END ";
-
-            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
-            {
-                await connection.OpenAsync();
                 SqlCommand command = new SqlCommand(sql, connection);
                 await command.ExecuteNonQueryAsync();
             }
@@ -81,6 +79,7 @@ namespace modstaz.Libraries
         {
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
             {
+                await connection.OpenAsync();
                 string sql = $@"
                     IF Object_id('Roles', 'U') IS NULL 
                       BEGIN 
@@ -96,8 +95,6 @@ namespace modstaz.Libraries
                             ) 
                           ON [PRIMARY] 
                       END ";
-
-                await connection.OpenAsync();
                 SqlCommand command = new SqlCommand(sql, connection);
                 await command.ExecuteNonQueryAsync();
             }
@@ -106,6 +103,7 @@ namespace modstaz.Libraries
         {
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
             {
+                await connection.OpenAsync();
                 string sql = $@"
                     IF Object_id('Roles', 'U') IS NOT NULL 
                        AND NOT EXISTS (SELECT * 
@@ -120,15 +118,16 @@ namespace modstaz.Libraries
                                       ('Add'), 
                                       ('View') 
                       END";
-
-                await connection.OpenAsync();
                 SqlCommand command = new SqlCommand(sql, connection);
                 await command.ExecuteNonQueryAsync();
             }
         }
         private async Task CreateStorageAreaAcessTable()
         {
-            string sql = $@"
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+                string sql = $@"
                     IF Object_id('StorageAreaAccess', 'U') IS NULL 
                       BEGIN 
                           CREATE TABLE [StorageAreaAccess] 
@@ -144,17 +143,16 @@ namespace modstaz.Libraries
                             ) 
                           ON [PRIMARY] 
                       END";
-
-            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
-            {
-                await connection.OpenAsync();
                 SqlCommand command = new SqlCommand(sql, connection);
                 await command.ExecuteNonQueryAsync();
             }
         }
         private async Task CreateColumnTypesTable()
         {
-            string sql = $@"
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+                string sql = $@"
                     IF Object_id('ColumnTypes', 'U') IS NULL 
                       BEGIN 
                           CREATE TABLE [ColumnTypes] 
@@ -169,30 +167,29 @@ namespace modstaz.Libraries
                             ) 
                           ON [PRIMARY] 
                       END";
-
-            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
-            {
-                await connection.OpenAsync();
                 SqlCommand command = new SqlCommand(sql, connection);
                 await command.ExecuteNonQueryAsync();
             }
         }
         private async Task SeedColumnTypesTable()
         {
-            string values = "";
-
-            ColumnType columnType = new ColumnType();
-            List<Type> types = new List<Type>();
-            types = columnType.Types;
-
-            foreach (Type type in types)
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
             {
-                values += $@"('{ type.Name }', '{ type.SqlDataType }'),";
-            }
+                string values = "";
 
-            values = values.TrimEnd(',');
+                ColumnType columnType = new ColumnType();
+                List<Type> types = new List<Type>();
+                types = columnType.Types;
 
-            string sql = $@"
+                foreach (Type type in types)
+                {
+                    values += $@"({type.Name}, {type.SqlDataType}),";
+                }
+                values = values.TrimEnd(',');
+
+                await connection.OpenAsync();
+
+                string sql = $@"
                     IF Object_id('ColumnTypes', 'U') IS NOT NULL 
                        AND NOT EXISTS (SELECT TOP 1 [ID] 
                                        FROM   [ColumnTypes]) 
@@ -203,11 +200,32 @@ namespace modstaz.Libraries
                           VALUES      { values }
                       END";
 
-            Log.LogInformation(sql);
 
-            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
-            {
-                await connection.OpenAsync();
+                //string sql = $@"
+                //    IF Object_id('ColumnTypes', 'U') IS NOT NULL 
+                //       AND NOT EXISTS (SELECT TOP 1 [ID] 
+                //                       FROM   [ColumnTypes]) 
+                //      BEGIN 
+                //          INSERT INTO [ColumnTypes] 
+                //                      ([Name], 
+                //                       [SqlDataType]) 
+                //          VALUES      ('Yes/No', 
+                //                       'bit'), 
+                //                      ('Integer', 
+                //                       'int'), 
+                //                      ('Decimal', 
+                //                       'float'), 
+                //                      ('Small Text', 
+                //                       'nvarchar(255)'), 
+                //                      ('Big Text', 
+                //                       'nvarchar(MAX)'), 
+                //                      ('GUID', 
+                //                       'uniqueidentifier'), 
+                //                      ('XML', 
+                //                       'xml'), 
+                //                      ('Date/Time', 
+                //                       'datetime') 
+                //      END";
                 SqlCommand command = new SqlCommand(sql, connection);
                 await command.ExecuteNonQueryAsync();
             }

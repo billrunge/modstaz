@@ -27,8 +27,8 @@ namespace modstaz.Libraries
                 .ToList();
 
             List<RowColumn> updateColumns = (from i in inputColumns
-                                             from c in columns.Where(x => i.DisplayName.ToLower() == x.DisplayName.ToLower() || i.DisplayName == x.Id.ToString())
-                                             select new RowColumn() { Id = c.Id, DisplayName = c.DisplayName, Value = i.Value, ColumnTypeId = c.ColumnTypeId }).ToList();
+                                                from c in columns.Where(x => i.DisplayName.ToLower() == x.DisplayName.ToLower() || i.DisplayName == x.Id.ToString())
+                                                select new RowColumn() { Id = c.Id, DisplayName = c.DisplayName, Value = i.Value, ColumnTypeId = c.ColumnTypeId }).ToList();
 
             string columnIds = "";
             string values = "";

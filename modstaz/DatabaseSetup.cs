@@ -20,7 +20,9 @@ namespace modstaz.Functions
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            Setup setup = new Setup();
+    
+
+            Setup setup = new Setup() { Log = log};
 
             await setup.CreateTablesAsync();          
 
