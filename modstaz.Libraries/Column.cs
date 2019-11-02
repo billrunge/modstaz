@@ -152,6 +152,5 @@ namespace modstaz.Libraries
                 return (string)await command.ExecuteScalarAsync();
             }
         }
-
     }
 }

@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace modstaz.Functions
 {
-    public static class InsertRow
+    public static class InsertRows
     {
-        [FunctionName("InsertRow")]
+        [FunctionName("InsertRows")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
@@ -23,16 +23,16 @@ namespace modstaz.Functions
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             int storageAreaId = data["StorageAreaId"];
-            JObject fields = data.Fields;
-
+            JArray fieldsArray = data.FieldsArray;
 
             Row row = new Row() { StorageAreaId = storageAreaId };
 
-            return new OkObjectResult(await row.InsertRowAsync(fields));
+            foreach (JObject fields in fieldsArray)
+            {
+                await row.InsertRowAsync(fields);
+            }
 
-            //return name != null
-            //    ? (ActionResult)new OkObjectResult($"Hello, {name}")
-            //    : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+            return new OkObjectResult("Fields inserted successfully.");
         }
     }
 }
