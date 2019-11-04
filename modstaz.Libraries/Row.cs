@@ -60,7 +60,7 @@ namespace modstaz.Libraries
 
             return sql;
         }
-        //not done
+
         public async Task<string> EditRowAsync(int rowId, JObject fields)
         {
             List<RowColumn> inputColumns = fields.Properties()
