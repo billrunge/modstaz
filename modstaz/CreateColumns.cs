@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using modstaz.Libraries;
 using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace modstaz
 {
@@ -25,21 +26,30 @@ namespace modstaz
             dynamic data = JsonConvert.DeserializeObject(requestBody);
 
             int storageAreaId = data.StorageAreaID;
-
             JArray columnArray = data.ColumnArray;
+            string results = string.Empty;
 
             foreach (JObject c in columnArray)
             {
-                Column column = new Column()
+                string displayName = (string)c["DisplayName"];
+                Regex regex = new Regex("^[0-9]+$");
+                if (!regex.IsMatch(displayName))
                 {
-                    StorageAreaId = storageAreaId,
-                    ColumnTypeId = (int)c["ColumnTypeID"],
-                    DisplayName = (string)c["DisplayName"]
-                };
-                await column.CreateColumnAsync();
+                    Column column = new Column()
+                    {
+                        StorageAreaId = storageAreaId,
+                        ColumnTypeId = (int)c["ColumnTypeID"],
+                        DisplayName = displayName
+                    };
+                    await column.CreateColumnAsync();
+                    results += $"Column '{ displayName }' created successfully." + System.Environment.NewLine;
+                } else
+                {
+                    results += $"Column '{ displayName }' was not created because column names cannot be numbers." + System.Environment.NewLine;
+                }
             }
 
-            return (ActionResult)new OkObjectResult("Columns created successfully.");
+            return (ActionResult)new OkObjectResult(results);
         }
     }
 }

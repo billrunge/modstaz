@@ -22,14 +22,14 @@ namespace modstaz.Functions
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
-            int storageAreaId = data["StorageAreaId"];
+            int storageAreaId = data["StorageAreaId"];            
             JArray fieldsArray = data.FieldsArray;
-
-            Row row = new Row() { StorageAreaId = storageAreaId };
+            Row row = new Row() { StorageAreaId = storageAreaId, Log = log };
 
             foreach (JObject fields in fieldsArray)
             {
-                await row.InsertRowAsync(fields);
+                string results = await row.InsertRowAsync(fields);
+                log.LogInformation(results);
             }
             return new OkObjectResult("Fields inserted successfully.");
         }
