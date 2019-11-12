@@ -1,5 +1,15 @@
 <html>
     <button onclick="createInstance()">Create Instance</button>
     <button onclick="destroyInstance()">Destroy Instance</button>
+    <br>
+    <h2>Create a Field</h2>
+    <form id="createField">
+        Storage Area ID: <input type="text" name="storageAreaId"><br>
+        Column Name: <input type="text" name="displayName"><br>
+        Column Type ID: <input type="text" name="columnTypeId"><br><br>
+        <input type="button" onclick="createField(this.form)" Value="Click">
+      </form>
+
+
     <script src="modstaz.js"></script>
 </html>
