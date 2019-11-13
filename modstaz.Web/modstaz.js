@@ -232,14 +232,16 @@ function insertRow(form) {
     let fieldsArrayString = "";
 
     for (var i = 0; i < form.length - 1; i++) {
-        fieldsArrayString += `"${form[i].name}": "${form[i].value}",`;
+        fieldsArrayString += `"${form[i].name}":"${form[i].value}",`;
     }
 
     fieldsArrayString = fieldsArrayString.slice(0, -1);
 
+    console.log(JSON.parse(`{ ${fieldsArrayString} }`));
+
     let data = {
         "StorageAreaId": localStorage.getItem('storageAreaId') || 0,
-        "FieldsArray": [ `{${JSON.parse(fieldsArrayString)}}` ]
+        "FieldsArray": [JSON.parse(`{ ${fieldsArrayString} }`)]
     };
 
     var request = new XMLHttpRequest();
@@ -284,8 +286,33 @@ function getColumnsToEdit(form) {
     request.onerror = function () { };
 }
 
-function editRow(form){
-    console.log("bananas!");
+function editRow(form) {
+    fields = "";
+    for (var i = 0; i < form.length - 1; i++) {
+        fields += `"${form[i].name}": "${form[i].value}",`;
+    }
+    fields = fields.slice(0, -1);
+
+    data = {
+        StorageAreaId: localStorage.getItem('storageAreaId'),
+        RowFieldsArray: [{
+            RowId: localStorage.getItem('rowId'),
+            Fields: JSON.parse(`{${fields}}`)
+        }]
+    };
+    
+    console.log("Editing Columns!");
+    var request = new XMLHttpRequest();
+    request.open('POST', `${apiBaseUrl}/api/EditRows`, true);
+
+    request.send(JSON.stringify(data));
+
+    request.onload = function () {
+        var resp = this.response;
+        console.log(resp);
+    };
+
+    request.onerror = function () { };
 }
 
 
