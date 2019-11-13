@@ -44,6 +44,7 @@ namespace modstaz.Libraries
                 }
             }
         }
+
         public async Task<bool> DoesUserExistAsync()
         {
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
@@ -66,7 +67,25 @@ namespace modstaz.Libraries
             }
         }
 
+        public async Task<int> GetUserIdByEmailAddressAsync()
+        {
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
 
+                string sql = $@"
+                    SELECT TOP 1 [ID] 
+                    FROM   [Users] 
+                    WHERE  [EmailAddress] = @EmailAddress";
+
+                SqlCommand command = new SqlCommand(sql, connection);
+
+                command.Parameters.Add(new SqlParameter { ParameterName = "@EmailAddress", SqlDbType = SqlDbType.NVarChar, Value = EmailAddress });
+
+                return (int)await command.ExecuteScalarAsync();
+            }
+
+        }
 
     }
 }

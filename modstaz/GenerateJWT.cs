@@ -22,20 +22,27 @@ namespace modstaz.Functions
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
-            int userId = data.UserId;
             string emailAddress = data.EmailAddress;
 
-            JWT jwt = new JWT()
+            User user = new User() { EmailAddress = emailAddress};
+
+            if (await user.DoesUserExistAsync())
             {
-                UserId = userId,
-                EmailAddress = emailAddress,
-                Key = "&E)H+MbQeThWmZq4t7w!z%C*F-JaNcRfUjXn2r5u8x/A?D(G+KbPeShVkYp3s6v9y$B&E)H@McQfTjWnZq4t7w!z%C*F-JaNdRgUkXp2s5u8x/A?D(G+KbPeShVmYq3t"
-            };
+                int userId = await user.GetUserIdByEmailAddressAsync();
+                JWT jwt = new JWT()
+                {
+                    UserId = userId,
+                    EmailAddress = emailAddress,
+                    Key = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY")
+                };
 
-            string jwtString = await jwt.GenerateJwtAsync();
+                string jwtString = await jwt.GenerateJwtAsync();
+                return (ActionResult)new OkObjectResult(jwtString);
 
+            }
 
-            return (ActionResult)new OkObjectResult(jwtString);
+            return (ActionResult)new OkObjectResult("User does not exist");
+
         }
     }
 }

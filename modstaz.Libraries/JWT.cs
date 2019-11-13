@@ -15,6 +15,7 @@ namespace modstaz.Libraries
         public string EmailAddress { get; set; }
         public TimeSpan TokenLifeSpan { get; set; } = TimeSpan.FromMinutes(60);
         public string Key { get; set; }
+
         public async Task<string> GenerateJwtAsync()
         {
 
@@ -40,6 +41,8 @@ namespace modstaz.Libraries
             return await Task.Run(() => handler.WriteToken(secToken));
 
         }
+
+
 
 
         //public int GetUserFromJWT(string jwt)
