@@ -70,6 +70,18 @@ namespace modstaz.Libraries
         {
             return await GetRowsAsync(await GetColumnsAsync());
         }
+
+        public async Task<string> GetStorageAreaRowAsync(int rowId, bool onlyShowEditable)
+        {
+            if (onlyShowEditable)
+            {
+                return await GetRowByIdAsync(rowId, await GetEditableColumnsAsync());
+            }else
+            {
+                return await GetRowByIdAsync(rowId, await GetColumnsAsync());
+            }
+
+        }
         public async Task<string> GetStorsageAreasAsync()
         {
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
@@ -166,6 +178,43 @@ namespace modstaz.Libraries
                 }
             }
         }
+
+        private async Task<List<KeyValuePair<int, string>>> GetEditableColumnsAsync()
+        {
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+
+                string sql = $@"
+                    SELECT [ID], 
+                           [DisplayName] 
+                    FROM   [{ StorageAreaId }Columns]
+                    WHERE  [IsEditable] = 1";
+
+                SqlCommand command = new SqlCommand(sql, connection);
+
+                using (SqlDataReader dataReader = await command.ExecuteReaderAsync())
+                {
+                    DataTable dataTable = new DataTable();
+                    dataTable.Load(dataReader);
+
+                    List<KeyValuePair<int, string>> idColumnList = new List<KeyValuePair<int, string>>();
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        if (!int.TryParse(row["ID"].ToString(), out int columnId))
+                        {
+                            throw new InvalidCastException("Unable to cast Column ID returned from Database to int");
+                        }
+
+                        KeyValuePair<int, string> idColumnPair = new KeyValuePair<int, string>(columnId, row["DisplayName"].ToString());
+
+                        idColumnList.Add(idColumnPair);
+                    }
+
+                    return idColumnList;
+                }
+            }
+        }
         private async Task<string> GetRowsAsync(List<KeyValuePair<int, string>> idColumn)
         {
             string columnString = $"[{ idColumn[idColumn.Count - 1].Key.ToString() }] AS [{ idColumn[idColumn.Count - 1].Value }]";
@@ -184,6 +233,43 @@ namespace modstaz.Libraries
                     FROM   [{ StorageAreaId }Rows]";
 
                 SqlCommand command = new SqlCommand(sql, connection);
+
+                using (SqlDataReader dataReader = await command.ExecuteReaderAsync())
+                {
+                    DataTable dataTable = new DataTable();
+                    dataTable.Load(dataReader);
+
+                    return JsonConvert.SerializeObject(dataTable, Formatting.Indented);
+                }
+            }
+        }
+
+        private async Task<string> GetRowByIdAsync(int rowId, List<KeyValuePair<int, string>> idColumn)
+        {
+            string columnString = $"[{ idColumn[idColumn.Count - 1].Key.ToString() }] AS [{ idColumn[idColumn.Count - 1].Value }]";
+
+            for (int i = idColumn.Count - 2; i >= 0; i--)
+            {
+                columnString = $"[{ idColumn[i].Key.ToString() }] AS [{ idColumn[i].Value }], " + columnString;
+            }
+
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+
+                string sql = $@"
+                    SELECT { columnString } 
+                    FROM   [{ StorageAreaId }Rows]
+                    WHERE [1] = @RowID";
+
+                SqlCommand command = new SqlCommand(sql, connection);
+
+                command.Parameters.Add(new SqlParameter
+                {
+                    ParameterName = "@RowID",
+                    SqlDbType = SqlDbType.Int,
+                    Value = rowId
+                });
 
                 using (SqlDataReader dataReader = await command.ExecuteReaderAsync())
                 {
