@@ -33,7 +33,8 @@ namespace modstaz.Functions
                 {
                     UserId = userId,
                     EmailAddress = emailAddress,
-                    Key = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY")
+                    Key = $"xmRfrELZ#hEZKJEGgeQX9gKAkIMD#%RB5GHG%02lsFonn*^!&&YVDLe7L$*JMf3fgdz&B"
+                    //Key = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY")
                 };
 
                 string jwtString = await jwt.GenerateJwtAsync();

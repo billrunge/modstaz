@@ -23,9 +23,11 @@ namespace modstaz.Libraries
                 new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(Key));
 
             SigningCredentials credentials =
-                new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+                new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            JwtHeader header = new JwtHeader(credentials);
+            
+
+            JwtHeader header = new JwtHeader(credentials) ;
 
             JwtPayload payload = new JwtPayload
            {
@@ -42,8 +44,10 @@ namespace modstaz.Libraries
 
         }
 
-
-
+        public bool IsJwtValid()
+        {
+            return true;
+        }
 
         //public int GetUserFromJWT(string jwt)
         //{
