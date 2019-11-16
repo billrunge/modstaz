@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace modstaz
 {
-    public static class GetStorageArea
+    public static class IsJWTValid
     {
         [FunctionName("GetStorageArea")]
         public static async Task<IActionResult> Run(
