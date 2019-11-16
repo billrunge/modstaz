@@ -31,11 +31,14 @@ namespace modstaz.Functions
                 Key = $"xmRfrELZ#hEZKJEGgeQX9gKAkIMD#%RB5GHG%02lsFonn*^!&&YVDLe7L$*JMf3fgdz&B"
             };
 
-            return (ActionResult)new OkObjectResult(jwtHelper.ParseJWT(jwtString));
+            string jwtResp = jwtHelper.ParseJWT(jwtString);
 
+            if (jwtResp != "false")
+            {
+                return (ActionResult)new OkObjectResult(jwtHelper.ParseJWT(jwtString));
+            }
 
-
-            //return (ActionResult)new OkObjectResult("User does not exist");
+            return new BadRequestObjectResult("Invalid JWT");
 
         }
     }

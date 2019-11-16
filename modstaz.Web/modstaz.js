@@ -1,5 +1,5 @@
 var apiBaseUrl = "http://localhost:7071";
-isUserAuthenticated();
+
 
 function createInstance() {
 
@@ -30,131 +30,29 @@ function destroyInstance() {
     request.send();
 }
 
-function createColumn(form) {
-    var storageAreaId = form.storageAreaId.value;
-    var displayName = form.displayName.value;
-    var columnTypeId = form.columnTypeId.value;
-    console.log(`storage area id = ${storageAreaId}, display name = ${displayName}, columnTypeID = ${columnTypeId}`);
+// function createStorageArea(form) {
+//     var userId = form.userId.value;
+//     var storageAreaName = form.storageAreaName.value;
+//     console.log(`user id = ${userId}, storage area name = ${storageAreaName}`);
 
-    console.log("Creating Field!");
-    var request = new XMLHttpRequest();
-    request.open('POST', `${apiBaseUrl}/api/CreateColumns`, true);
+//     console.log("Creating Storage area!");
+//     var request = new XMLHttpRequest();
+//     request.open('POST', `${apiBaseUrl}/api/CreateStorageArea`, true);
 
-    let data = {
-        "StorageAreaID": storageAreaId,
-        "ColumnArray": [
-            {
-                ColumnTypeID: columnTypeId,
-                DisplayName: displayName
-            }
-        ],
+//     let data = {
+//         "StorageAreaName": storageAreaName,
+//         "UserId": userId
+//     };
 
-    };
+//     request.send(JSON.stringify(data));
 
-    request.send(JSON.stringify(data));
+//     request.onload = function () {
+//         var resp = this.response;
+//         console.log(resp);
+//     };
 
-    request.onload = function () {
-        var resp = this.response;
-        console.log(resp);
-    };
-
-    request.onerror = function () { };
-}
-
-
-function createStorageArea(form) {
-    var userId = form.userId.value;
-    var storageAreaName = form.storageAreaName.value;
-    console.log(`user id = ${userId}, storage area name = ${storageAreaName}`);
-
-    console.log("Creating Storage area!");
-    var request = new XMLHttpRequest();
-    request.open('POST', `${apiBaseUrl}/api/CreateStorageArea`, true);
-
-    let data = {
-        "StorageAreaName": storageAreaName,
-        "UserId": userId
-    };
-
-    request.send(JSON.stringify(data));
-
-    request.onload = function () {
-        var resp = this.response;
-        console.log(resp);
-    };
-
-    request.onerror = function () { };
-}
-
-function deleteStorageArea(form) {
-    var storageAreaId = form.storageAreaId.value;
-    console.log(`storage area id = ${storageAreaId}`);
-
-    console.log("Deleting Storage Area!");
-    var request = new XMLHttpRequest();
-    request.open('POST', `${apiBaseUrl}/api/DeleteStorageArea`, true);
-
-    let data = {
-        "StorageAreaID": storageAreaId
-    };
-
-    request.send(JSON.stringify(data));
-
-    request.onload = function () {
-        var resp = this.response;
-        console.log(resp);
-    };
-
-    request.onerror = function () { };
-}
-
-function getStorageAreas(form) {
-    var userId = form.userId.value;
-    console.log(`user id = ${userId}`);
-
-    console.log("Getting Storage Areas!");
-    var request = new XMLHttpRequest();
-    request.open('POST', `${apiBaseUrl}/api/GetStorageAreas`, true);
-
-    let data = {
-        "UserId": userId
-    };
-
-    request.send(JSON.stringify(data));
-
-    request.onload = function () {
-        var html = jsonToTable(JSON.parse(this.response), "storageAreasList");
-        console.log(html);
-
-        document.getElementById('storageAreas').innerHTML = html;
-    };
-
-    request.onerror = function () { };
-}
-
-function getStorageArea(form) {
-    var storageAreaId = form.storageAreaId.value;
-    console.log(`storage area id = ${storageAreaId}`);
-
-    console.log("Getting Storage Areas!");
-    var request = new XMLHttpRequest();
-    request.open('POST', `${apiBaseUrl}/api/GetStorageArea`, true);
-
-    let data = {
-        "StorageAreaId": storageAreaId
-    };
-
-    request.send(JSON.stringify(data));
-
-    request.onload = function () {
-        var html = jsonToTable(JSON.parse(this.response), "storageAreaList");
-        console.log(html);
-
-        document.getElementById('storageAreaItems').innerHTML = html;
-    };
-
-    request.onerror = function () { };
-}
+//     request.onerror = function () { };
+// }
 
 function getStorageAreaColumns(form) {
     var storageAreaId = form.storageAreaId.value;
@@ -199,61 +97,6 @@ function createUser(form) {
         console.log(resp);
     };
 
-    request.onerror = function () { };
-}
-
-
-function getColumnsToInsert(form) {
-    var storageAreaId = form.storageAreaId.value;
-    localStorage.setItem('storageAreaId', storageAreaId);
-    console.log(`storage area id = ${storageAreaId}`);
-
-    console.log("Getting Storage Area Columns!");
-    var request = new XMLHttpRequest();
-    request.open('POST', `${apiBaseUrl}/api/GetStorageAreaColumns`, true);
-
-    let data = {
-        "StorageAreaId": storageAreaId
-    };
-
-    request.send(JSON.stringify(data));
-
-    request.onload = function () {
-        var html = jsonToForm(JSON.parse(this.response), "storageAreaColumns", "insertRow");
-        console.log(html);
-
-        document.getElementById('columnsToUpdate').innerHTML = html;
-    };
-
-    request.onerror = function () { };
-}
-
-function insertRow(form) {
-    console.log("Inserting Row!");
-
-    let fieldsArrayString = "";
-
-    for (var i = 0; i < form.length - 1; i++) {
-        fieldsArrayString += `"${form[i].name}":"${form[i].value}",`;
-    }
-
-    fieldsArrayString = fieldsArrayString.slice(0, -1);
-
-    console.log(JSON.parse(`{ ${fieldsArrayString} }`));
-
-    let data = {
-        "StorageAreaId": localStorage.getItem('storageAreaId') || 0,
-        "FieldsArray": [JSON.parse(`{ ${fieldsArrayString} }`)]
-    };
-
-    var request = new XMLHttpRequest();
-    request.open('POST', `${apiBaseUrl}/api/InsertRows`, true);
-
-    request.send(JSON.stringify(data));
-
-    request.onload = function () {
-        console.log(this.response);
-    };
     request.onerror = function () { };
 }
 
@@ -302,7 +145,7 @@ function editRow(form) {
             Fields: JSON.parse(`{${fields}}`)
         }]
     };
-    
+
     console.log("Editing Columns!");
     var request = new XMLHttpRequest();
     request.open('POST', `${apiBaseUrl}/api/EditRows`, true);
@@ -318,13 +161,11 @@ function editRow(form) {
 }
 
 
-
-function isUserAuthenticated()
-{
+function isUserAuthenticated() {
     var jwt = localStorage.getItem('JWT');
-    console.log(jwt); 
+    console.log(jwt);
 
-    if (jwt === null){
+    if (jwt === null) {
         window.location.href = "/login.html";
     }
 
@@ -341,8 +182,30 @@ function isUserAuthenticated()
     request.onload = function () {
         var resp = JSON.parse(this.response);
         console.log(resp.userId);
+        userId = resp.userId;
     };
 
     request.onerror = function () { };
 }
+
+
+function redirectToLogin() {
+    window.location.replace("/login.html");
+}
+
+
+function getGetParameters() {
+    var qd = {};
+    if (location.search) location.search.substr(1).split("&").forEach(function (item) {
+        var s = item.split("="),
+            k = s[0],
+            v = s[1] && decodeURIComponent(s[1]); //  null-coalescing / short-circuit
+        //(k in qd) ? qd[k].push(v) : qd[k] = [v]
+        (qd[k] = qd[k] || []).push(v) // null-coalescing / short-circuit
+    })
+
+    return qd;
+}
+
+
 
