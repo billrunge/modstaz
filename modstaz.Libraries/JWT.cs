@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -18,9 +19,6 @@ namespace modstaz.Libraries
 
         public async Task<string> GenerateJwtAsync()
         {
-            //SymmetricSecurityKey securityKey =
-            //    new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(Key));
-
             SigningCredentials credentials =
                 new SigningCredentials(new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(Key)), SecurityAlgorithms.HmacSha256);
 
@@ -63,13 +61,39 @@ namespace modstaz.Libraries
         private static string Base64UrlEncode(byte[] input)
         {
             return Convert.ToBase64String(input).Split('=')[0].Replace('+', '-').Replace('/', '_');
-            //output = output.Split('=')[0].Replace('+', '-').Replace('/', '_');
-            //return output;
         }
 
-        public long GetCurrentEpoch()
+        public int GetCurrentEpoch()
         {
-            return (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+            return (int)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+        }
+
+        public string ParseJWT(string jwt)
+        {
+            if (IsJwtValid(jwt))
+            {
+                JwtSecurityToken token = new JwtSecurityToken(jwt);
+                JWTobject jwtObject = new JWTobject()
+                {
+                    emailAddress = token.Claims.First(c => c.Type == "emailAddress").Value,
+                    userId = int.Parse(token.Claims.First(c => c.Type == "userId").Value),
+                    exp = int.Parse(token.Claims.First(c => c.Type == "exp").Value),
+                    iat = int.Parse(token.Claims.First(c => c.Type == "iat").Value)
+                };
+                if (jwtObject.exp > GetCurrentEpoch())
+                {
+                    return JsonConvert.SerializeObject(jwtObject);
+                }
+                else
+                {
+                    return "Invalid JWT";
+                }
+                
+            }
+            else
+            {
+                return "Invalid JWT";
+            }
         }
 
         public class JWTobject
@@ -78,20 +102,6 @@ namespace modstaz.Libraries
             public string emailAddress { get; set; }
             public int iat { get; set; }
             public int exp { get; set; }
-
-
-            //public int GetUserFromJWT(string jwt)
-            //{
-            //    var token = new JwtSecurityToken(jwtEncodedString: jwt);
-            //    return int.Parse(token.Claims.First(c => c.Type == "User").Value);
-            //}
-
-            //public int GetGameFromJWT(string jwt)
-            //{
-            //    var token = new JwtSecurityToken(jwtEncodedString: jwt);
-            //    return int.Parse(token.Claims.First(c => c.Type == "Game").Value);
-            //}
-
         }
     }
 }

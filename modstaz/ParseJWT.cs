@@ -13,7 +13,7 @@ namespace modstaz.Functions
 {
     public static class ValidateJWT
     {
-        [FunctionName("ValidateJWT")]
+        [FunctionName("ParseJWT")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
@@ -31,7 +31,7 @@ namespace modstaz.Functions
                 Key = $"xmRfrELZ#hEZKJEGgeQX9gKAkIMD#%RB5GHG%02lsFonn*^!&&YVDLe7L$*JMf3fgdz&B"
             };
 
-            return (ActionResult)new OkObjectResult(jwtHelper.IsJwtValid(jwtString));
+            return (ActionResult)new OkObjectResult(jwtHelper.ParseJWT(jwtString));
 
 
 
