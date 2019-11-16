@@ -86,13 +86,13 @@ namespace modstaz.Libraries
                 }
                 else
                 {
-                    return "Invalid JWT";
+                    return "false";
                 }
                 
             }
             else
             {
-                return "Invalid JWT";
+                return "false";
             }
         }
 

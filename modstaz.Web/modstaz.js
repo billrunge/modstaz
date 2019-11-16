@@ -1,6 +1,8 @@
 var apiBaseUrl = "http://localhost:7071";
+isUserAuthenticated();
 
 function createInstance() {
+
     console.log("Creating instance!");
     var request = new XMLHttpRequest();
     request.open('GET', `${apiBaseUrl}/api/DatabaseSetup`, true);
@@ -316,25 +318,31 @@ function editRow(form) {
 }
 
 
-function login(form){
-    var emailAddress = form.emailAddress.value;
 
-    console.log("Generating JWT!");
+function isUserAuthenticated()
+{
+    var jwt = localStorage.getItem('JWT');
+    console.log(jwt); 
+
+    if (jwt === null){
+        window.location.href = "/login.html";
+    }
+
+    console.log("validating JWT!");
     var request = new XMLHttpRequest();
-    request.open('POST', `${apiBaseUrl}/api/GenerateJWT`, true);
+    request.open('POST', `${apiBaseUrl}/api/ParseJWT`, true);
 
     let data = {
-        "EmailAddress": emailAddress
+        "JWT": jwt
     };
 
     request.send(JSON.stringify(data));
 
     request.onload = function () {
-        var resp = this.response;
-        console.log(resp);
-
+        var resp = JSON.parse(this.response);
+        console.log(resp.userId);
     };
 
     request.onerror = function () { };
-
 }
+
