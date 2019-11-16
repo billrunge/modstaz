@@ -23,19 +23,32 @@ namespace modstaz
             dynamic data = JsonConvert.DeserializeObject(requestBody);
 
             string name = data.StorageAreaName;
-            int userId = data.UserId;
-            object fields = data.Fields;
 
-            StorageArea storageArea = new StorageArea()
+            string jwtString = data.JWT;
+
+            JWT jwtHelper = new JWT()
             {
-                StorageAreaName = name,
-                UserId = userId
+                Key = $"xmRfrELZ#hEZKJEGgeQX9gKAkIMD#%RB5GHG%02lsFonn*^!&&YVDLe7L$*JMf3fgdz&B"
             };
 
-            await storageArea.CreateStorageAreaAsync();
+            string jwtResp = jwtHelper.ParseJWT(jwtString);
 
-            return (ActionResult)new OkObjectResult($"storage area created");
-            //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+            if (jwtResp != "false")
+            {
+                dynamic jwtData = JsonConvert.DeserializeObject(jwtResp);
+
+                StorageArea storageArea = new StorageArea()
+                {
+                    StorageAreaName = name,
+                    UserId = jwtData.userId
+                };
+
+                await storageArea.CreateStorageAreaAsync();
+                return (ActionResult)new OkObjectResult($"storage area created");
+            }
+
+
+            return (ActionResult)new BadRequestObjectResult("Invalid JWT");
         }
 
     }
