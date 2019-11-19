@@ -30,29 +30,29 @@ function destroyInstance() {
     request.send();
 }
 
-function getStorageAreaColumns(form) {
-    var storageAreaId = form.storageAreaId.value;
-    console.log(`storage area id = ${storageAreaId}`);
+// function getStorageAreaColumns(form) {
+//     var storageAreaId = form.storageAreaId.value;
+//     console.log(`storage area id = ${storageAreaId}`);
 
-    console.log("Getting Storage Area Columns!");
-    var request = new XMLHttpRequest();
-    request.open('POST', `${apiBaseUrl}/api/GetStorageAreaColumns`, true);
+//     console.log("Getting Storage Area Columns!");
+//     var request = new XMLHttpRequest();
+//     request.open('POST', `${apiBaseUrl}/api/GetStorageAreaColumns`, true);
 
-    let data = {
-        "StorageAreaId": storageAreaId
-    };
+//     let data = {
+//         "StorageAreaId": storageAreaId
+//     };
 
-    request.send(JSON.stringify(data));
+//     request.send(JSON.stringify(data));
 
-    request.onload = function () {
-        var html = jsonToTable(JSON.parse(this.response), "storageAreaColumnsList");
-        console.log(html);
+//     request.onload = function () {
+//         var html = jsonToTable(JSON.parse(this.response), "storageAreaColumnsList");
+//         console.log(html);
 
-        document.getElementById('storageAreaColumns').innerHTML = html;
-    };
+//         document.getElementById('storageAreaColumns').innerHTML = html;
+//     };
 
-    request.onerror = function () { };
-}
+//     request.onerror = function () { };
+// }
 
 function isUserAuthenticated() {
     var jwt = localStorage.getItem('JWT');

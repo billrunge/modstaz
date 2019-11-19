@@ -21,7 +21,7 @@ function getStorageArea() {
         request.send(JSON.stringify(data));
 
         request.onload = function () {
-            var html = jsonToTable(JSON.parse(this.response), "storageAreaList");
+            var html = storageAreaJsonToTable(JSON.parse(this.response), "storageAreaList");
             console.log(html);
 
             document.getElementById('storageAreaItems').innerHTML = html;
@@ -34,6 +34,38 @@ function getStorageArea() {
     }
 }
 
+function deleteRow(rowId) {
+    let params = getGetParameters();
+
+    if (params.ID != undefined) {
+        let storageAreaId = params.ID[0];
+        var request = new XMLHttpRequest();
+        request.open('POST', `${apiBaseUrl}/api/DeleteRows`, true);
+
+        let data = {
+            "StorageAreaId": storageAreaId,
+            "RowIds": [rowId]
+        };
+
+        request.send(JSON.stringify(data));
+
+        request.onload = function () {
+            getStorageArea();
+            insertButtons();
+        };
+
+        request.onerror = function () { };
+
+    } else {
+        window.location.replace("../getStorageAreas.html");
+    }
+
+
+
+
+}
+
+
 function insertButtons() {
     let params = getGetParameters();
 
@@ -44,11 +76,10 @@ function insertButtons() {
         html += `<a href="/getStorageAreas.html">Storage Areas</a><br>`;
         html += `<a href="/insertRow.html?ID=${storageAreaId}">Insert Row</a><br>`;
         html += `<a href="/createColumn.html?ID=${storageAreaId}">Create Column</a><br>`;
+        html += `<a href="/getStorageAreaColumns.html?ID=${storageAreaId}">Delete/Edit Columns</a><br>`;
         html += `<a href="/index.html">Home</a><br>`;
         document.getElementById('storageAreaButtons').innerHTML = html;
 
     }
-
-
 
 }

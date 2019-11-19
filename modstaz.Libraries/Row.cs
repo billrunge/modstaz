@@ -103,6 +103,28 @@ namespace modstaz.Libraries
             return sql;
         }
 
+        public async Task DeleteRowsByIdAsync(int[] rowIds)
+        {
+            string rowIdsString = "";
+
+            foreach (int rowId in rowIds)
+            {
+                rowIdsString += $" { rowId.ToString() },";
+            }
+            rowIdsString = $"{rowIdsString.TrimEnd(',')}";
+
+            string sql = $@"
+                DELETE FROM [{ StorageAreaId }Rows]
+                WHERE       [1] IN ({ rowIdsString })";
+
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+                SqlCommand command = new SqlCommand(sql, connection);
+                await command.ExecuteNonQueryAsync();
+            }
+        }
+
 
 
         class RowColumn
