@@ -19,6 +19,7 @@ function createStorageArea(form) {
         request.onload = function () {
             var resp = this.response;
             console.log(resp);
+            window.location.replace("/getStorageAreas.html");
         };
 
         request.onerror = function () { };

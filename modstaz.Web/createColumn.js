@@ -40,5 +40,22 @@ function loadCreateColumn() {
     } else {
         window.location.replace("../getStorageAreas.html");
     }
+    insertCreateColumnLinks()
 
 }
+
+function insertCreateColumnLinks() {
+    let params = getGetParameters();
+
+    if (params.ID != undefined) {
+        let storageAreaId = params.ID[0];
+        let html = "";
+
+        html += `<a href="/getStorageArea.html?ID=${storageAreaId}">Return to Storage Area</a><br>`;
+        html += `<a href="/insertRow.html?ID=${storageAreaId}">Insert Row</a><br>`;
+        html += `<a href="/index.html">Home</a><br>`;
+        document.getElementById('createColumnLinks').innerHTML = html;
+
+    }
+
+};

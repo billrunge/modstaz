@@ -1,6 +1,6 @@
 let storageAreaId;
 getColumnsToInsert();
-
+insertInsertRowLinks();
 
 function getColumnsToInsert() {
     let params = getGetParameters();
@@ -57,4 +57,21 @@ function insertRow(form) {
         console.log(this.response);
     };
     request.onerror = function () { };
+}
+
+function insertInsertRowLinks() {
+    let params = getGetParameters();
+
+    if (params.ID != undefined) {
+        let storageAreaId = params.ID[0];
+        let html = "";
+
+        html += `<a href="/createColumn.html?ID=${storageAreaId}">Create Column</a><br>`;
+        html += `<a href="/getStorageArea.html?ID=${storageAreaId}">Return to Storage Area</a><br>`;
+        html += `<a href="/getStorageAreas.html">Storage Areas</a><br>`;
+        html += `<a href="/index.html">Home</a><br>`;
+        document.getElementById('insertRowLinks').innerHTML = html;
+
+    }
+
 }
