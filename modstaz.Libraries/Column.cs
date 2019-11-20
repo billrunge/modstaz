@@ -152,5 +152,53 @@ namespace modstaz.Libraries
                 return (string)await command.ExecuteScalarAsync();
             }
         }
+
+
+        public async Task<string> DeleteColumnAsync(int columnId)
+        {
+            if (await IsColumnEditableAsync(columnId))
+            {
+                string sql;
+                using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+                {
+                    await connection.OpenAsync();
+                    sql = $@"
+                    ALTER TABLE [{ StorageAreaId }Rows] 
+                      DROP COLUMN [{ columnId }]; 
+
+                    DELETE FROM [{ StorageAreaId }Columns] 
+                    WHERE  [ID] = @ColumnID ";
+
+                    SqlCommand command = new SqlCommand(sql, connection);
+                    command.Parameters.Add(new SqlParameter { ParameterName = "@ColumnID", SqlDbType = SqlDbType.Int, Value = columnId });
+
+                    await command.ExecuteNonQueryAsync();
+                    return "Column deleted successfully";
+                }
+            }
+            return "You cannot delete this column";
+
+        }
+
+
+        private async Task<bool> IsColumnEditableAsync(int columnId)
+        {
+            string sql;
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+                sql = $@"
+                    SELECT [IsEditable] 
+                    FROM   [{ StorageAreaId }Columns] 
+                    WHERE  [ID] = @ColumnID";
+
+                SqlCommand command = new SqlCommand(sql, connection);
+                command.Parameters.Add(new SqlParameter { ParameterName = "@ColumnID", SqlDbType = SqlDbType.Int, Value = columnId });
+
+                return (bool)await command.ExecuteScalarAsync();
+
+            }
+
+        }
     }
 }
