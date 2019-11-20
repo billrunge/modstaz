@@ -1,5 +1,6 @@
 let storageAreaId;
 loadCreateColumn();
+getColumnTypeList();
 
 function createColumn(form) {
     var displayName = form.displayName.value;
@@ -59,3 +60,38 @@ function insertCreateColumnLinks() {
     }
 
 };
+
+function getColumnTypeList() {
+
+    console.log("Getting Column Type List!");
+    var request = new XMLHttpRequest();
+    request.open('GET', `${apiBaseUrl}/api/GetColumnTypes`, true);
+
+    request.send();
+
+    request.onload = function () {
+        var resp = this.response;
+        let respObj = JSON.parse(resp);
+
+        let html = `<select name="columnTypeId">`;
+
+        for (let i = 0; i < respObj.length; i++){
+            html += `<option value="${respObj[i].id}">${respObj[i].name}</option>`;
+        }
+        html += "</select>";
+        document.getElementById('columnTypeSelector').innerHTML = html;
+    };
+
+    request.onerror = function () { };
+}
+
+
+
+
+// let i = `<select name="columnTypeId">
+//         <option value="1">Yes/No</option>
+//         <option value="2">Integer</option>
+//         <option value="3">Decimal</option>
+//         <option value="4">Small Text</option>
+//       </select>`
+// }

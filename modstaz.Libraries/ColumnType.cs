@@ -4,7 +4,7 @@ using System.Text;
 
 namespace modstaz.Libraries
 {
-    class ColumnType
+    public class ColumnType
     {
 
         public List<Type> TypesList { get; set; }
