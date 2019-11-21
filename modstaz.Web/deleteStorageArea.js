@@ -1,12 +1,11 @@
 function deleteStorageArea(storageAreaId) {
-    console.log(`storage area id = ${storageAreaId}`);
-
-    console.log("Deleting Storage Area!");
+    let jwt = localStorage.getItem('JWT');
     var request = new XMLHttpRequest();
     request.open('POST', `${apiBaseUrl}/api/DeleteStorageArea`, true);
 
     let data = {
-        "StorageAreaID": storageAreaId
+        "StorageAreaID": storageAreaId,
+        "JWT": jwt
     };
 
     request.send(JSON.stringify(data));
@@ -14,6 +13,10 @@ function deleteStorageArea(storageAreaId) {
     request.onload = function () {
         var resp = this.response;
         console.log(resp);
+        if (resp == "Invalid JWT")
+        {
+            redirectToLogin();
+        }
         getStorageAreas();
     };
 

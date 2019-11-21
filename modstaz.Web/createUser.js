@@ -1,6 +1,5 @@
 function createUser(form) {
     var emailAddress = form.emailAddress.value;
-    console.log(`email address = ${emailAddress}`);
 
     console.log("Creating User!");
     var request = new XMLHttpRequest();

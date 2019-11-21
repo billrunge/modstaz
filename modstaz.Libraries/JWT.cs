@@ -6,6 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace modstaz.Libraries
@@ -41,6 +42,14 @@ namespace modstaz.Libraries
 
         public bool IsJwtValid(string jwt)
         {
+            Regex regex = new Regex(@"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$");
+            jwt = jwt ?? "jwt";
+
+            if (!regex.IsMatch(jwt))
+            {
+                return false;
+            }
+            
             string[] parts = jwt.Split(".".ToCharArray());
             string header = parts[0];
             string payload = parts[1];

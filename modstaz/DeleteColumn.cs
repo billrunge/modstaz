@@ -24,14 +24,25 @@ namespace modstaz
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             int storageAreaId = data.StorageAreaId;
             int columnId = data.ColumnId;
+            string jwtString = data.JWT;
 
-            Column column = new Column()
+            JWT jwtHelper = new JWT()
             {
-                StorageAreaId = storageAreaId
+                Key = $"xmRfrELZ#hEZKJEGgeQX9gKAkIMD#%RB5GHG%02lsFonn*^!&&YVDLe7L$*JMf3fgdz&B"
             };
 
-            return (ActionResult)new OkObjectResult(await column.DeleteColumnAsync(columnId));
+            string jwtResp = jwtHelper.ParseJWT(jwtString);
+
+            if (jwtResp != "false")
+            {
+                Column column = new Column()
+                {
+                    StorageAreaId = storageAreaId
+                };
+
+                return (ActionResult)new OkObjectResult(await column.DeleteColumnAsync(columnId));
+            }
+            return (ActionResult)new BadRequestObjectResult("Invalid JWT");
         }
     }
-
 }

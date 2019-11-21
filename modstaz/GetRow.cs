@@ -26,9 +26,25 @@ namespace modstaz.Functions
             int rowId = data["RowId"];
             bool onlyShowEditable = data["OnlyShowEditable"] ?? false;
 
-            StorageArea storageArea = new StorageArea { StorageAreaId = storageAreaId };
 
-            return new OkObjectResult(await storageArea.GetStorageAreaRowAsync(rowId, onlyShowEditable));
+            string jwtString = data.JWT;
+
+            JWT jwtHelper = new JWT()
+            {
+                Key = $"xmRfrELZ#hEZKJEGgeQX9gKAkIMD#%RB5GHG%02lsFonn*^!&&YVDLe7L$*JMf3fgdz&B"
+            };
+
+            string jwtResp = jwtHelper.ParseJWT(jwtString);
+
+            if (jwtResp != "false")
+            {
+                StorageArea storageArea = new StorageArea { StorageAreaId = storageAreaId };
+
+                return new OkObjectResult(await storageArea.GetStorageAreaRowAsync(rowId, onlyShowEditable));
+            }
+
+            return (ActionResult)new BadRequestObjectResult("Invalid JWT");
+
         }
     }
 }

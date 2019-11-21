@@ -15,7 +15,12 @@ function getStorageAreas() {
         request.send(JSON.stringify(data));
     
         request.onload = function () {
-            var html = storageAreasJsonToTable(JSON.parse(this.response), "storageAreasList");
+            let resp = this.response;
+            if (resp == "Invalid JWT")
+            {
+                redirectToLogin();
+            }
+            var html = storageAreasJsonToTable(JSON.parse(resp), "storageAreasList");
             console.log(html);
     
             document.getElementById('storageAreas').innerHTML = html;

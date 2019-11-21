@@ -24,14 +24,28 @@ namespace modstaz.Functions
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             int storageAreaId = data["StorageAreaId"];
             JArray fieldsArray = data.RowFieldsArray;
-            Row row = new Row() { StorageAreaId = storageAreaId };
 
-            foreach (JObject fields in fieldsArray)
+            string jwtString = data.JWT;
+
+            JWT jwtHelper = new JWT()
             {
-                string sql = await row.EditRowAsync((int)fields["RowId"], (JObject)fields["Fields"]);
-                log.LogInformation(sql);
+                Key = $"xmRfrELZ#hEZKJEGgeQX9gKAkIMD#%RB5GHG%02lsFonn*^!&&YVDLe7L$*JMf3fgdz&B"
+            };
+
+            string jwtResp = jwtHelper.ParseJWT(jwtString);
+
+            if (jwtResp != "false")
+            {
+                Row row = new Row() { StorageAreaId = storageAreaId };
+
+                foreach (JObject fields in fieldsArray)
+                {
+                    string sql = await row.EditRowAsync((int)fields["RowId"], (JObject)fields["Fields"]);
+                    log.LogInformation(sql);
+                }
+                return new OkObjectResult("Fields inserted successfully.");
             }
-            return new OkObjectResult("Fields inserted successfully.");
+            return (ActionResult)new BadRequestObjectResult("Invalid JWT");
         }
     }
 }

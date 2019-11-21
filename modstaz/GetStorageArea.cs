@@ -22,13 +22,22 @@ namespace modstaz
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             int storageAreaId = data.StorageAreaId;
+            string jwtString = data.JWT;
 
-            StorageArea storageArea = new StorageArea() { StorageAreaId = storageAreaId };
+            JWT jwtHelper = new JWT()
+            {
+                Key = $"xmRfrELZ#hEZKJEGgeQX9gKAkIMD#%RB5GHG%02lsFonn*^!&&YVDLe7L$*JMf3fgdz&B"
+            };
 
-            string result = await storageArea.GetStorageAreaAsync();
+            string jwtResp = jwtHelper.ParseJWT(jwtString);
 
-            return new OkObjectResult(result);
-            //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+            if (jwtResp != "false")
+            {
+                StorageArea storageArea = new StorageArea() { StorageAreaId = storageAreaId };
+                return new OkObjectResult(await storageArea.GetStorageAreaAsync());
+            }
+
+            return (ActionResult)new BadRequestObjectResult("Invalid JWT");
         }
     }
 }

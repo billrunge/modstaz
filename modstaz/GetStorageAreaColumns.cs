@@ -27,10 +27,23 @@ namespace modstaz
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             int storageAreaId = data.StorageAreaId;
 
-            Column column = new Column() { StorageAreaId = storageAreaId };
+            string jwtString = data.JWT;
 
-            return (ActionResult)new OkObjectResult(await column.GetStorageAreaColumnsAsync());
-                //: new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+            JWT jwtHelper = new JWT()
+            {
+                Key = $"xmRfrELZ#hEZKJEGgeQX9gKAkIMD#%RB5GHG%02lsFonn*^!&&YVDLe7L$*JMf3fgdz&B"
+            };
+
+            string jwtResp = jwtHelper.ParseJWT(jwtString);
+
+            if (jwtResp != "false")
+            {
+                Column column = new Column() { StorageAreaId = storageAreaId };
+                return (ActionResult)new OkObjectResult(await column.GetStorageAreaColumnsAsync());
+            }
+
+
+            return (ActionResult)new BadRequestObjectResult("Invalid JWT");
         }
     }
 }

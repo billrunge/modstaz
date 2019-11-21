@@ -1,9 +1,11 @@
+isUserAuthenticated();
 getStorageArea();
 insertButtons();
 
 function getStorageArea() {
 
     let params = getGetParameters();
+    let jwt = localStorage.getItem('JWT');
 
     if (params.ID != undefined) {
         console.log(params.ID[0]);
@@ -15,13 +17,18 @@ function getStorageArea() {
         request.open('POST', `${apiBaseUrl}/api/GetStorageArea`, true);
 
         let data = {
-            "StorageAreaId": storageAreaId
+            "StorageAreaId": storageAreaId,
+            "JWT": jwt
         };
 
         request.send(JSON.stringify(data));
 
         request.onload = function () {
-            var html = storageAreaJsonToTable(JSON.parse(this.response), "storageAreaList");
+            let resp = this.response;
+            if (resp == "Invalid JWT") {
+                redirectToLogin();
+            }
+            var html = storageAreaJsonToTable(JSON.parse(resp), "storageAreaList");
             console.log(html);
 
             document.getElementById('storageAreaItems').innerHTML = html;
@@ -30,12 +37,14 @@ function getStorageArea() {
         request.onerror = function () { };
 
     } else {
+
         window.location.replace("../getStorageAreas.html");
     }
 }
 
 function deleteRow(rowId) {
     let params = getGetParameters();
+    let jwt = localStorage.getItem('JWT');
 
     if (params.ID != undefined) {
         let storageAreaId = params.ID[0];
@@ -44,12 +53,17 @@ function deleteRow(rowId) {
 
         let data = {
             "StorageAreaId": storageAreaId,
-            "RowIds": [rowId]
+            "RowIds": [rowId],
+            "JWT": jwt
         };
 
         request.send(JSON.stringify(data));
 
         request.onload = function () {
+            let resp = this.response;
+            if (resp == "Invalid JWT") {
+                redirectToLogin();
+            }
             getStorageArea();
             insertButtons();
         };

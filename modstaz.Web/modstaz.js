@@ -30,36 +30,12 @@ function destroyInstance() {
     request.send();
 }
 
-// function getStorageAreaColumns(form) {
-//     var storageAreaId = form.storageAreaId.value;
-//     console.log(`storage area id = ${storageAreaId}`);
-
-//     console.log("Getting Storage Area Columns!");
-//     var request = new XMLHttpRequest();
-//     request.open('POST', `${apiBaseUrl}/api/GetStorageAreaColumns`, true);
-
-//     let data = {
-//         "StorageAreaId": storageAreaId
-//     };
-
-//     request.send(JSON.stringify(data));
-
-//     request.onload = function () {
-//         var html = jsonToTable(JSON.parse(this.response), "storageAreaColumnsList");
-//         console.log(html);
-
-//         document.getElementById('storageAreaColumns').innerHTML = html;
-//     };
-
-//     request.onerror = function () { };
-// }
-
 function isUserAuthenticated() {
     var jwt = localStorage.getItem('JWT');
     console.log(jwt);
 
     if (jwt === null) {
-        window.location.href = "/login.html";
+        redirectToLogin();
     }
 
     console.log("validating JWT!");
@@ -73,9 +49,11 @@ function isUserAuthenticated() {
     request.send(JSON.stringify(data));
 
     request.onload = function () {
-        var resp = JSON.parse(this.response);
-        console.log(resp.userId);
-        userId = resp.userId;
+        var resp = this.response;
+        if (resp == "Invalid JWT")
+        {
+            redirectToLogin();
+        }
     };
 
     request.onerror = function () { };
@@ -84,6 +62,10 @@ function isUserAuthenticated() {
 
 function redirectToLogin() {
     window.location.replace("/login.html");
+}
+
+function redirectToHome() {
+    window.location.replace("/index.html");
 }
 
 

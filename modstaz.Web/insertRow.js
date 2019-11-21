@@ -1,9 +1,11 @@
 let storageAreaId;
+isUserAuthenticated();
 getColumnsToInsert();
 insertInsertRowLinks();
 
 function getColumnsToInsert() {
     let params = getGetParameters();
+    let jwt = localStorage.getItem('JWT');
 
     if (params.ID != undefined) {
         storageAreaId = params.ID[0];
@@ -11,13 +13,19 @@ function getColumnsToInsert() {
         request.open('POST', `${apiBaseUrl}/api/GetStorageAreaColumns`, true);
 
         let data = {
-            "StorageAreaId": storageAreaId
+            "StorageAreaId": storageAreaId,
+            "JWT": jwt
         };
 
         request.send(JSON.stringify(data));
 
         request.onload = function () {
-            var html = jsonToForm(JSON.parse(this.response), "storageAreaColumns", "insertRow");
+            let resp = this.response;
+            if (resp == "Invalid JWT")
+            {
+                redirectToLogin();
+            }
+            var html = jsonToForm(JSON.parse(resp), "storageAreaColumns", "insertRow");
             console.log(html);
 
             document.getElementById('columnsToUpdate').innerHTML = html;
@@ -31,9 +39,9 @@ function getColumnsToInsert() {
 }
 
 function insertRow(form) {
-    console.log("Inserting Row!");
 
     let fieldsArrayString = "";
+    let jwt = localStorage.getItem('JWT');
 
     for (var i = 0; i < form.length - 1; i++) {
         fieldsArrayString += `"${form[i].name}":"${form[i].value}",`;
@@ -45,7 +53,8 @@ function insertRow(form) {
 
     let data = {
         "StorageAreaId": storageAreaId || 0,
-        "FieldsArray": [JSON.parse(`{ ${fieldsArrayString} }`)]
+        "FieldsArray": [JSON.parse(`{ ${fieldsArrayString} }`)],
+        "JWT": jwt
     };
 
     var request = new XMLHttpRequest();
@@ -54,7 +63,11 @@ function insertRow(form) {
     request.send(JSON.stringify(data));
 
     request.onload = function () {
-        console.log(this.response);
+        let resp = this.response;
+        if (resp == "Invalid JWT")
+        {
+            redirectToLogin();
+        }
     };
     request.onerror = function () { };
 }

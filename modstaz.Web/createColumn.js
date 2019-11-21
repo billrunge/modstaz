@@ -5,6 +5,7 @@ getColumnTypeList();
 function createColumn(form) {
     var displayName = form.displayName.value;
     var columnTypeId = form.columnTypeId.value;
+    let jwt = localStorage.getItem('JWT');
     console.log(`storage area id = ${storageAreaId}, display name = ${displayName}, columnTypeID = ${columnTypeId}`);
 
     console.log("Creating Field!");
@@ -13,6 +14,7 @@ function createColumn(form) {
 
     let data = {
         "StorageAreaID": storageAreaId,
+        "JWT": jwt,
         "ColumnArray": [
             {
                 ColumnTypeID: columnTypeId,
@@ -26,13 +28,19 @@ function createColumn(form) {
 
     request.onload = function () {
         var resp = this.response;
-        console.log(resp);
+        if (resp == "Invalid JWT")
+        {
+            redirectToLogin();
+        }
     };
 
-    request.onerror = function () { };
+    request.onerror = function () { 
+
+    };
 }
 
 function loadCreateColumn() {
+    isUserAuthenticated();
     let params = getGetParameters();
 
     if (params.ID != undefined) {
@@ -84,14 +92,3 @@ function getColumnTypeList() {
 
     request.onerror = function () { };
 }
-
-
-
-
-// let i = `<select name="columnTypeId">
-//         <option value="1">Yes/No</option>
-//         <option value="2">Integer</option>
-//         <option value="3">Decimal</option>
-//         <option value="4">Small Text</option>
-//       </select>`
-// }

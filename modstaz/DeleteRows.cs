@@ -24,16 +24,29 @@ namespace modstaz
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             int storageAreaId = data.StorageAreaId;
             int[] rowIds = data.RowIds.ToObject<int[]>();
+            string jwtString = data.JWT;
 
-            Row row = new Row()
+            JWT jwtHelper = new JWT()
             {
-                StorageAreaId = storageAreaId
+                Key = $"xmRfrELZ#hEZKJEGgeQX9gKAkIMD#%RB5GHG%02lsFonn*^!&&YVDLe7L$*JMf3fgdz&B"
             };
 
-            await row.DeleteRowsByIdAsync(rowIds);
+            string jwtResp = jwtHelper.ParseJWT(jwtString);
 
-            return (ActionResult)new OkObjectResult($"Rows deleted successfully");
+            if (jwtResp != "false")
+            {
+                Row row = new Row()
+                {
+                    StorageAreaId = storageAreaId
+                };
+
+                await row.DeleteRowsByIdAsync(rowIds);
+
+                return (ActionResult)new OkObjectResult($"Rows deleted successfully");
+
+            }
+
+            return (ActionResult)new BadRequestObjectResult("Invalid JWT");
         }
     }
-
 }

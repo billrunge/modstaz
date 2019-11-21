@@ -15,8 +15,8 @@ function login(form){
 
     request.onload = function () {
         var resp = this.response;
-        console.log(resp);
         localStorage.setItem('JWT', resp);
+        redirectToHome();
     };
 
     request.onerror = function () { };

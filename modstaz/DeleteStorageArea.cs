@@ -23,15 +23,27 @@ namespace modstaz
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             int storageAreaId = data.StorageAreaID;
+            string jwtString = data.JWT;
 
-            StorageArea storageArea = new StorageArea()
+            JWT jwtHelper = new JWT()
             {
-                StorageAreaId = storageAreaId
+                Key = $"xmRfrELZ#hEZKJEGgeQX9gKAkIMD#%RB5GHG%02lsFonn*^!&&YVDLe7L$*JMf3fgdz&B"
             };
 
-            await storageArea.DeleteStorageAreaAsync();
+            string jwtResp = jwtHelper.ParseJWT(jwtString);
 
-            return (ActionResult)new OkObjectResult($"StorageArea with ID { storageAreaId } deleted successfully");
+            if (jwtResp != "false")
+            {
+                StorageArea storageArea = new StorageArea()
+                {
+                    StorageAreaId = storageAreaId
+                };
+
+                await storageArea.DeleteStorageAreaAsync();
+
+                return (ActionResult)new OkObjectResult($"StorageArea with ID { storageAreaId } deleted successfully");
+            }
+            return (ActionResult)new BadRequestObjectResult("Invalid JWT");
         }
     }
 

@@ -1,8 +1,10 @@
+isUserAuthenticated();
 getStorageAreaColumns();
-insertGetColumnsLinks()
+insertGetColumnsLinks();
 
 function getStorageAreaColumns(form) {
     let params = getGetParameters();
+    let jwt = localStorage.getItem('JWT');
 
     if (params.ID != undefined) {
         let storageAreaId = params.ID[0];
@@ -14,13 +16,19 @@ function getStorageAreaColumns(form) {
         request.open('POST', `${apiBaseUrl}/api/GetStorageAreaColumns`, true);
 
         let data = {
-            "StorageAreaId": storageAreaId
+            "StorageAreaId": storageAreaId,
+            "JWT": jwt
         };
 
         request.send(JSON.stringify(data));
 
         request.onload = function () {
-            var html = columnsJsonToTable(JSON.parse(this.response), "storageAreaColumnsList");
+            let resp = this.response;
+            if (resp == "Invalid JWT")
+            {
+                redirectToLogin();
+            }
+            var html = columnsJsonToTable(JSON.parse(resp), "storageAreaColumnsList");
             console.log(html);
 
             document.getElementById('storageAreaColumns').innerHTML = html;
@@ -32,6 +40,7 @@ function getStorageAreaColumns(form) {
 
 function deleteColumn(columnId) {
     let params = getGetParameters();
+    let jwt = localStorage.getItem('JWT');
 
     if (params.ID != undefined) {
         let storageAreaId = params.ID[0];
@@ -41,12 +50,18 @@ function deleteColumn(columnId) {
 
         let data = {
             "StorageAreaId": storageAreaId,
-            "ColumnId": columnId
+            "ColumnId": columnId,
+            "JWT": jwt
         };
 
         request.send(JSON.stringify(data));
 
         request.onload = function () {
+            let resp = this.response;
+            if (resp == "Invalid JWT")
+            {
+                redirectToLogin();
+            }
             getStorageAreaColumns();
         };
 
