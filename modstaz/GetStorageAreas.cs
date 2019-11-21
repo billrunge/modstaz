@@ -23,8 +23,6 @@ namespace modstaz
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
 
-            //int userId = data.UserId;
-
             string jwtString = data.JWT;
 
             JWT jwtHelper = new JWT()

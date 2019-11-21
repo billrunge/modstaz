@@ -21,13 +21,10 @@ function getColumnsToInsert() {
 
         request.onload = function () {
             let resp = this.response;
-            if (resp == "Invalid JWT")
-            {
+            if (resp == "Invalid JWT") {
                 redirectToLogin();
             }
             var html = jsonToForm(JSON.parse(resp), "storageAreaColumns", "insertRow");
-            console.log(html);
-
             document.getElementById('columnsToUpdate').innerHTML = html;
         };
 
@@ -64,8 +61,7 @@ function insertRow(form) {
 
     request.onload = function () {
         let resp = this.response;
-        if (resp == "Invalid JWT")
-        {
+        if (resp == "Invalid JWT") {
             redirectToLogin();
         }
     };
@@ -86,5 +82,45 @@ function insertInsertRowLinks() {
         document.getElementById('insertRowLinks').innerHTML = html;
 
     }
+}
 
+function jsonToForm(json, className, functionName) {
+
+    let html = "";
+
+    json.map(function (row) {
+        if (row['IsEditable'] === true) {
+            switch (row['ColumnTypeID']) {
+                case 1:
+                    html += `${row['DisplayName']}: <input type="checkbox" name="${row['ID']}"><br>`;
+                    break;
+                case 2:
+                    html += `${row['DisplayName']}: <input type="number" name="${row['ID']}"><br>`;
+                    break;
+                case 3:
+                    html += `${row['DisplayName']}: <input type="number" name="${row['ID']}"><br>`;
+                    break;
+                case 4:
+                    html += `${row['DisplayName']}: <input type="text" name="${row['ID']}"><br>`;
+                    break;
+                case 5:
+                    html += `${row['DisplayName']}: <input type="text" name="${row['ID']}"><br>`;
+                    break;
+                case 6:
+                    html += `${row['DisplayName']}: <input type="text" name="${row['ID']}"><br>`;
+                    break;
+                case 7:
+                    html += `${row['DisplayName']}: <input type="text" name="${row['ID']}"><br>`;
+                    break;
+                case 8:
+                    html += `${row['DisplayName']}: <input type="date" name="${row['ID']}"><br>`;
+                    break;
+            }
+        }
+    });
+
+    return `<form id="${className}">${html}
+    <br>
+    <button onclick="${functionName}(this.form)"type="button">Save</button>
+    </form>`;
 }

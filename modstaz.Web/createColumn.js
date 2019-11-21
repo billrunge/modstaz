@@ -1,6 +1,5 @@
 let storageAreaId;
 loadCreateColumn();
-getColumnTypeList();
 
 function createColumn(form) {
     var displayName = form.displayName.value;
@@ -28,13 +27,13 @@ function createColumn(form) {
 
     request.onload = function () {
         var resp = this.response;
-        if (resp == "Invalid JWT")
-        {
+        if (resp == "Invalid JWT") {
             redirectToLogin();
         }
+        resetCreateColumn();
     };
 
-    request.onerror = function () { 
+    request.onerror = function () {
 
     };
 }
@@ -50,7 +49,12 @@ function loadCreateColumn() {
         window.location.replace("../getStorageAreas.html");
     }
     insertCreateColumnLinks()
+    getColumnTypeList();
 
+}
+
+function resetCreateColumn(){
+    document.getElementById("createColumn").reset();
 }
 
 function insertCreateColumnLinks() {
@@ -60,7 +64,8 @@ function insertCreateColumnLinks() {
         let storageAreaId = params.ID[0];
         let html = "";
 
-        html += `<a href="/getStorageArea.html?ID=${storageAreaId}">Return to Storage Area</a><br>`;
+        html += `<a href="/getStorageAreaColumns.html?ID=${storageAreaId}">Return to Edit Columns</a><br>`;
+        html += `<a href="/getStorageArea.html?ID=${storageAreaId}">Storage Area</a><br>`;
         html += `<a href="/insertRow.html?ID=${storageAreaId}">Insert Row</a><br>`;
         html += `<a href="/index.html">Home</a><br>`;
         document.getElementById('createColumnLinks').innerHTML = html;
@@ -83,7 +88,7 @@ function getColumnTypeList() {
 
         let html = `<select name="columnTypeId">`;
 
-        for (let i = 0; i < respObj.length; i++){
+        for (let i = 0; i < respObj.length; i++) {
             html += `<option value="${respObj[i].id}">${respObj[i].name}</option>`;
         }
         html += "</select>";
