@@ -92,7 +92,12 @@ function jsonToForm(json, className, functionName) {
         if (row['IsEditable'] === true) {
             switch (row['ColumnTypeID']) {
                 case 1:
-                    html += `${row['DisplayName']}: <input type="checkbox" name="${row['ID']}"><br>`;
+                    html += `${row['DisplayName']}: <select name="${row['ID']}">
+                    <option value="NULL">Unset</option>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                  </select>`
+                    //html += `${row['DisplayName']}: <input type="checkbox" name="${row['ID']}"><br>`;
                     break;
                 case 2:
                     html += `${row['DisplayName']}: <input type="number" name="${row['ID']}"><br>`;

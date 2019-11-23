@@ -25,7 +25,7 @@ namespace modstaz.Libraries
 
             List<RowColumn> columns = columnObj
                 .Where(x => (bool)x["IsEditable"] == true)
-                .Select(x => new RowColumn { ColumnId = (int)x["ID"], DisplayName = (string)x["DisplayName"] })
+                .Select(x => new RowColumn { ColumnId = (int)x["ID"], DisplayName = (string)x["DisplayName"], ColumnTypeId = (int)x["ColumnTypeID"] })
                 .ToList();
 
             List<RowColumn> updateColumns = (from i in inputColumns
@@ -37,8 +37,16 @@ namespace modstaz.Libraries
 
             foreach (RowColumn c in updateColumns)
             {
+                Log.LogInformation($"Column ID: { c.ColumnId }, Column Type ID: { c.ColumnTypeId }");
                 columnIds += $" [{ c.ColumnId }],";
-                values += $"'{ c.Value }',";
+                if (c.ColumnTypeId == 1)
+                {
+                    values += $"{ c.Value },";
+                }
+                else
+                {
+                    values += $"'{ c.Value }',";
+                }
             }
 
             columnIds = columnIds.TrimEnd(',');
@@ -78,7 +86,7 @@ namespace modstaz.Libraries
             List<RowColumn> updateColumns = (from i in inputColumns
                                              from c in columns.Where(x => (i.DisplayName.ToLower() == x.DisplayName.ToLower() || i.DisplayName == x.ColumnId.ToString()))
                                              select new RowColumn() { ColumnId = c.ColumnId, DisplayName = c.DisplayName, Value = i.Value, ColumnTypeId = c.ColumnTypeId }).ToList();
-            
+
             string values = string.Empty;
 
             foreach (RowColumn c in updateColumns)
@@ -91,7 +99,7 @@ namespace modstaz.Libraries
                 UPDATE [{ StorageAreaId }Rows] 
                 SET    { values } 
                 WHERE  [1] = @RowID";
-          
+
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
             {
                 await connection.OpenAsync();
@@ -130,7 +138,7 @@ namespace modstaz.Libraries
         class RowColumn
         {
             public int ColumnId { get; set; }
-            public int RowId { get; set; }           
+            public int RowId { get; set; }
             public int ColumnTypeId { get; set; }
             public string DisplayName { get; set; }
             public string Value { get; set; }
