@@ -8,11 +8,7 @@ function getStorageArea() {
     let jwt = localStorage.getItem('JWT');
 
     if (params.ID != undefined) {
-        console.log(params.ID[0]);
         let storageAreaId = params.ID[0];
-        console.log(`storage area id = ${storageAreaId}`);
-
-        console.log("Getting Storage Areas!");
         var request = new XMLHttpRequest();
         request.open('POST', `${apiBaseUrl}/api/GetStorageArea`, true);
 
@@ -29,8 +25,7 @@ function getStorageArea() {
                 redirectToLogin();
             }
             var html = storageAreaJsonToTable(JSON.parse(resp), "storageAreaList");
-            console.log(html);
-
+            
             document.getElementById('storageAreaItems').innerHTML = html;
         };
 

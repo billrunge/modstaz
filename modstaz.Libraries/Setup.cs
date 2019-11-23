@@ -36,7 +36,7 @@ namespace modstaz.Libraries
 
             foreach (JObject s in storageAreas)
             {
-                storageArea.StorageAreaId = (int)s["ID"];
+                storageArea.StorageAreaId = (int)s["Id"];
                 await storageArea.DeleteStorageAreaAsync();
             }
 
@@ -80,10 +80,10 @@ namespace modstaz.Libraries
                       BEGIN 
                           CREATE TABLE [Users] 
                             ( 
-                               [ID]           [INT] IDENTITY(1, 1) NOT NULL, 
+                               [Id]           [INT] IDENTITY(1, 1) NOT NULL, 
                                [EmailAddress] [NVARCHAR](255) NOT NULL UNIQUE, 
                                [CreatedOn]    [DATETIME] NOT NULL, 
-                               CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED ( [ID] ASC )WITH ( 
+                               CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED ( [Id] ASC )WITH ( 
                                PAD_INDEX 
                                = 
                                OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, 
@@ -103,12 +103,12 @@ namespace modstaz.Libraries
                       BEGIN 
                           CREATE TABLE [StorageAreas] 
                             ( 
-                               [ID]           [INT] IDENTITY(1, 1) NOT NULL, 
+                               [Id]           [INT] IDENTITY(1, 1) NOT NULL, 
                                [Name]         [NVARCHAR](255) NOT NULL, 
-                               [CreatedBy]    [INT] FOREIGN KEY REFERENCES Users(ID), 
+                               [CreatedBy]    [INT] FOREIGN KEY REFERENCES Users(Id), 
                                [CreatedOn]    [DATETIME] NOT NULL, 
                                [LastModified] [DATETIME] NOT NULL, 
-                               CONSTRAINT [PK_StorageAreas] PRIMARY KEY CLUSTERED ( [ID] ASC ) WITH 
+                               CONSTRAINT [PK_StorageAreas] PRIMARY KEY CLUSTERED ( [Id] ASC ) WITH 
                                ( 
                                PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, 
                                ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) 
@@ -132,9 +132,9 @@ namespace modstaz.Libraries
                       BEGIN 
                           CREATE TABLE [Roles] 
                             ( 
-                               [ID]   [INT] IDENTITY(1, 1) NOT NULL, 
+                               [Id]   [INT] IDENTITY(1, 1) NOT NULL, 
                                [Name] [NVARCHAR](255) NOT NULL, 
-                               CONSTRAINT [PK_Roles] PRIMARY KEY CLUSTERED ( [ID] ASC ) WITH ( 
+                               CONSTRAINT [PK_Roles] PRIMARY KEY CLUSTERED ( [Id] ASC ) WITH ( 
                                PAD_INDEX = 
                                OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, 
                                ALLOW_ROW_LOCKS = 
@@ -164,7 +164,7 @@ namespace modstaz.Libraries
 
             string sql = $@"
                     IF Object_id('Roles', 'U') IS NOT NULL 
-                       AND NOT EXISTS (SELECT TOP 1 [ID] 
+                       AND NOT EXISTS (SELECT TOP 1 [Id] 
                                        FROM   [Roles]) 
                       BEGIN 
                           INSERT INTO [Roles] 
@@ -189,11 +189,11 @@ namespace modstaz.Libraries
                       BEGIN 
                           CREATE TABLE [StorageAreaAccess] 
                             ( 
-                               [ID]            [INT] IDENTITY(1, 1) NOT NULL, 
-                               [UserID]        [INT] FOREIGN KEY REFERENCES Users(ID), 
-                               [StorageAreaID] [INT] FOREIGN KEY REFERENCES StorageAreas(ID), 
-                               [RoleID]        [INT] FOREIGN KEY REFERENCES Roles(ID), 
-                               CONSTRAINT [PK_StorageAreaAccess] PRIMARY KEY CLUSTERED ( [ID] ASC ) 
+                               [Id]            [INT] IDENTITY(1, 1) NOT NULL, 
+                               [UserId]        [INT] FOREIGN KEY REFERENCES Users(Id), 
+                               [StorageAreaId] [INT] FOREIGN KEY REFERENCES StorageAreas(Id), 
+                               [RoleId]        [INT] FOREIGN KEY REFERENCES Roles(Id), 
+                               CONSTRAINT [PK_StorageAreaAccess] PRIMARY KEY CLUSTERED ( [Id] ASC ) 
                                WITH ( 
                                PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, 
                                ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) 
@@ -215,10 +215,10 @@ namespace modstaz.Libraries
                       BEGIN 
                           CREATE TABLE [ColumnTypes] 
                             ( 
-                               [ID]          [int] IDENTITY(1, 1) NOT NULL, 
+                               [Id]          [int] IDENTITY(1, 1) NOT NULL, 
                                [Name]        [NVARCHAR](255) NOT NULL, 
                                [SqlDataType] [NVARCHAR](50) NOT NULL,  CONSTRAINT [PK_ColumnTypes] 
-                               PRIMARY KEY CLUSTERED ( [ID] ASC )WITH (PAD_INDEX = OFF, 
+                               PRIMARY KEY CLUSTERED ( [Id] ASC )WITH (PAD_INDEX = OFF, 
                                STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = 
                                ON, 
                                ALLOW_PAGE_LOCKS = ON) 
@@ -249,7 +249,7 @@ namespace modstaz.Libraries
 
             string sql = $@"
                     IF Object_id('ColumnTypes', 'U') IS NOT NULL 
-                       AND NOT EXISTS (SELECT TOP 1 [ID] 
+                       AND NOT EXISTS (SELECT TOP 1 [Id] 
                                        FROM   [ColumnTypes]) 
                       BEGIN 
                           INSERT INTO [ColumnTypes] 

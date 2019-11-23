@@ -46,8 +46,6 @@ function insertRow(form) {
 
     fieldsArrayString = fieldsArrayString.slice(0, -1);
 
-    console.log(JSON.parse(`{ ${fieldsArrayString} }`));
-
     let data = {
         "StorageAreaId": storageAreaId || 0,
         "FieldsArray": [JSON.parse(`{ ${fieldsArrayString} }`)],
@@ -97,7 +95,6 @@ function jsonToForm(json, className, functionName) {
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                   </select>`
-                    //html += `${row['DisplayName']}: <input type="checkbox" name="${row['ID']}"><br>`;
                     break;
                 case 2:
                     html += `${row['DisplayName']}: <input type="number" name="${row['ID']}"><br>`;

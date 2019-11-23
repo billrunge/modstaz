@@ -22,9 +22,9 @@ namespace modstaz.Functions
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
-            int storageAreaId = data["StorageAreaId"];
-            int rowId = data["RowId"];
-            bool onlyShowEditable = data["OnlyShowEditable"] ?? false;
+            int storageAreaId = data.StorageAreaId;
+            int rowId = data.RowId;
+            bool onlyShowEditable = data.OnlyShowEditable ?? false;
 
 
             string jwtString = data.JWT;

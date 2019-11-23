@@ -22,7 +22,7 @@ namespace modstaz.Functions
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
-            int storageAreaId = data["StorageAreaId"];
+            int storageAreaId = data.StorageAreaId;
             JArray fieldsArray = data.RowFieldsArray;
 
             string jwtString = data.JWT;

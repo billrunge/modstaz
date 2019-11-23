@@ -3,7 +3,6 @@ var apiBaseUrl = "http://localhost:7071";
 function login(form){
     var emailAddress = form.emailAddress.value;
 
-    console.log("Generating JWT!");
     var request = new XMLHttpRequest();
     request.open('POST', `${apiBaseUrl}/api/GenerateJWT`, true);
 

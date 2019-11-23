@@ -1,6 +1,12 @@
 function storageAreaJsonToTable(json, className) {
+    let cols;
+    if (json[0] === undefined){
+        cols = [];
+    } else {
+        cols = Object.keys(json[0]);
+    }
 
-    let cols = Object.keys(json[0]);
+    
     let headerRow = '';
     let bodyRows = '';
 
@@ -22,7 +28,13 @@ function storageAreaJsonToTable(json, className) {
 
 function storageAreasJsonToTable(json, className) {
 
-    let cols = Object.keys(json[0]);
+    let cols;
+    if (json[0] === undefined){
+        cols = [];
+    } else {
+        cols = Object.keys(json[0]);
+    }
+
     let headerRow = '';
     let bodyRows = '';
 
@@ -51,7 +63,12 @@ function storageAreasJsonToTable(json, className) {
 
 function columnsJsonToTable(json, className) {
 
-    let cols = Object.keys(json[0]);
+    let cols;
+    if (json[0] === undefined){
+        cols = [];
+    } else {
+        cols = Object.keys(json[0]);
+    }
     let headerRow = '';
     let bodyRows = '';
 

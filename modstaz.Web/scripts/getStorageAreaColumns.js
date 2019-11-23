@@ -9,9 +9,6 @@ function getStorageAreaColumns(form) {
     if (params.ID != undefined) {
         let storageAreaId = params.ID[0];
 
-        console.log(`storage area id = ${storageAreaId}`);
-
-        console.log("Getting Storage Area Columns!");
         var request = new XMLHttpRequest();
         request.open('POST', `${apiBaseUrl}/api/GetStorageAreaColumns`, true);
 
@@ -29,7 +26,6 @@ function getStorageAreaColumns(form) {
                 redirectToLogin();
             }
             var html = columnsJsonToTable(JSON.parse(resp), "storageAreaColumnsList");
-            console.log(html);
 
             document.getElementById('storageAreaColumns').innerHTML = html;
         };

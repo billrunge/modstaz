@@ -25,7 +25,7 @@ namespace modstaz
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
 
-            int storageAreaId = data.StorageAreaID;
+            int storageAreaId = data.StorageAreaId;
             JArray columnArray = data.ColumnArray;
             string results = string.Empty;
             string jwtString = data.JWT ?? "INVALID";

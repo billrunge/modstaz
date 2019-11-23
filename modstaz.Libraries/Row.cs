@@ -32,8 +32,8 @@ namespace modstaz.Libraries
                                              from c in columns.Where(x => i.DisplayName.ToLower() == x.DisplayName.ToLower() || i.DisplayName == x.ColumnId.ToString())
                                              select new RowColumn() { ColumnId = c.ColumnId, DisplayName = c.DisplayName, Value = i.Value, ColumnTypeId = c.ColumnTypeId }).ToList();
 
-            string columnIds = string.Empty;
-            string values = string.Empty;
+            string columnIds = "[2], [3],";
+            string values = "Getutcdate(), Getutcdate(),";
 
             foreach (RowColumn c in updateColumns)
             {
@@ -54,8 +54,8 @@ namespace modstaz.Libraries
 
             string sql = $@"
                 INSERT INTO [{ StorageAreaId }ROWS] 
-                            ([2], [3], { columnIds }) 
-                VALUES      ( Getutcdate(), Getutcdate(), { values } ) ";
+                            ({ columnIds }) 
+                VALUES      ({ values } ) ";
 
             Log.LogInformation(sql);
 

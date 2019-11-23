@@ -21,7 +21,6 @@ function getStorageAreas() {
                 redirectToLogin();
             }
             var html = storageAreasJsonToTable(JSON.parse(resp), "storageAreasList");
-            console.log(html);
     
             document.getElementById('storageAreas').innerHTML = html;
         };

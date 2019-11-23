@@ -5,14 +5,12 @@ function createColumn(form) {
     var displayName = form.displayName.value;
     var columnTypeId = form.columnTypeId.value;
     let jwt = localStorage.getItem('JWT');
-    console.log(`storage area id = ${storageAreaId}, display name = ${displayName}, columnTypeID = ${columnTypeId}`);
 
-    console.log("Creating Field!");
     var request = new XMLHttpRequest();
     request.open('POST', `${apiBaseUrl}/api/CreateColumns`, true);
 
     let data = {
-        "StorageAreaID": storageAreaId,
+        "StorageAreaId": storageAreaId,
         "JWT": jwt,
         "ColumnArray": [
             {
@@ -76,7 +74,6 @@ function insertCreateColumnLinks() {
 
 function getColumnTypeList() {
 
-    console.log("Getting Column Type List!");
     var request = new XMLHttpRequest();
     request.open('GET', `${apiBaseUrl}/api/GetColumnTypes`, true);
 

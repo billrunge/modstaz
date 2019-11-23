@@ -19,7 +19,6 @@ function jsonToFormEdit(json, className, functionName) {
     let html = "";
 
     json = json[0];
-    console.log(json);
 
     for (var col in json){
         html += `${col}: <input type="text" value="${json[col]}" name="${col}"><br>`;
