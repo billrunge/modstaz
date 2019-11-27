@@ -49,9 +49,9 @@ namespace modstaz.Libraries
                 await connection.OpenAsync();
 
                 string sql = $@"
-                SELECT [ID], 
+                SELECT [Id], 
                        [DisplayName], 
-                       [ColumnTypeID], 
+                       [ColumnTypeId], 
                        [IsEditable],
                        [CreatedOn], 
                        [LastModified] 
@@ -78,12 +78,12 @@ namespace modstaz.Libraries
                 string sql = $@"
                     INSERT INTO [{ StorageAreaId }Columns] 
                                 ([DisplayName], 
-                                 [ColumnTypeID], 
+                                 [ColumnTypeId], 
                                  [IsEditable], 
                                  [CreatedOn], 
                                  [LastModified]) 
                     VALUES      (@DisplayName, 
-                                 @ColumnType, 
+                                 @ColumnTypeId, 
                                  { (IsEditable ? 1 : 0) }, 
                                  Getutcdate(), 
                                  Getutcdate());
@@ -94,7 +94,7 @@ namespace modstaz.Libraries
                 SqlCommand command = new SqlCommand(sql, connection);
 
                 command.Parameters.Add(new SqlParameter { ParameterName = "@DisplayName", SqlDbType = SqlDbType.NVarChar, Value = DisplayName });
-                command.Parameters.Add(new SqlParameter { ParameterName = "@ColumnType", SqlDbType = SqlDbType.Int, Value = ColumnTypeId });
+                command.Parameters.Add(new SqlParameter { ParameterName = "@ColumnTypeId", SqlDbType = SqlDbType.Int, Value = ColumnTypeId });
 
                 return Convert.ToInt32(await command.ExecuteScalarAsync());
 
@@ -109,7 +109,7 @@ namespace modstaz.Libraries
 
                 string sql = $@"
                     SELECT CASE 
-                             WHEN EXISTS (SELECT [ID] 
+                             WHEN EXISTS (SELECT [Id] 
                                           FROM   [{ StorageAreaId }Columns] 
                                           WHERE  [DisplayName] = @DisplayName) THEN Cast(1 AS BIT) 
                              ELSE Cast(0 AS BIT) 
@@ -144,10 +144,10 @@ namespace modstaz.Libraries
                 string sql = @"
                     SELECT [SqlDataType] 
                     FROM   [ColumnTypes] 
-                    WHERE  ID = @ColumnTypeID";
+                    WHERE  Id = @ColumnTypeId";
 
                 SqlCommand command = new SqlCommand(sql, connection);
-                command.Parameters.Add(new SqlParameter { ParameterName = "@ColumnTypeID", SqlDbType = SqlDbType.Int, Value = ColumnTypeId });
+                command.Parameters.Add(new SqlParameter { ParameterName = "@ColumnTypeId", SqlDbType = SqlDbType.Int, Value = ColumnTypeId });
 
                 return (string)await command.ExecuteScalarAsync();
             }
@@ -167,10 +167,10 @@ namespace modstaz.Libraries
                       DROP COLUMN [{ columnId }]; 
 
                     DELETE FROM [{ StorageAreaId }Columns] 
-                    WHERE  [ID] = @ColumnID ";
+                    WHERE  [Id] = @ColumnId";
 
                     SqlCommand command = new SqlCommand(sql, connection);
-                    command.Parameters.Add(new SqlParameter { ParameterName = "@ColumnID", SqlDbType = SqlDbType.Int, Value = columnId });
+                    command.Parameters.Add(new SqlParameter { ParameterName = "@ColumnId", SqlDbType = SqlDbType.Int, Value = columnId });
 
                     await command.ExecuteNonQueryAsync();
                     return "Column deleted successfully";
@@ -190,14 +190,34 @@ namespace modstaz.Libraries
                 sql = $@"
                     SELECT [IsEditable] 
                     FROM   [{ StorageAreaId }Columns] 
-                    WHERE  [ID] = @ColumnID";
+                    WHERE  [Id] = @ColumnId";
 
                 SqlCommand command = new SqlCommand(sql, connection);
-                command.Parameters.Add(new SqlParameter { ParameterName = "@ColumnID", SqlDbType = SqlDbType.Int, Value = columnId });
+                command.Parameters.Add(new SqlParameter { ParameterName = "@ColumnId", SqlDbType = SqlDbType.Int, Value = columnId });
 
                 return (bool)await command.ExecuteScalarAsync();
 
             }
         }
+
+        public async Task<int> GetColumnTypeIdByColumnId(int columnId)
+        {
+            string sql;
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+                sql = $@"
+                    SELECT [ColumnTypeId] 
+                    FROM   [{ StorageAreaId }Columns] 
+                    WHERE  [Id] = @ColumnId";
+
+                SqlCommand command = new SqlCommand(sql, connection);
+                command.Parameters.Add(new SqlParameter { ParameterName = "@ColumnId", SqlDbType = SqlDbType.Int, Value = columnId });
+
+                return (int)await command.ExecuteScalarAsync();
+            }
+
+        }
+
     }
 }

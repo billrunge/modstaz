@@ -21,18 +21,18 @@ namespace modstaz.Libraries
 
                 string sql = $@"
 						INSERT INTO [StorageAreaAccess] 
-									([UserID], 
-									 [StorageAreaID], 
-									 [RoleID]) 
-						VALUES     (@UserID, 
-									@StorageAreaID, 
-									@RoleID)";
+									([UserId], 
+									 [StorageAreaId], 
+									 [RoleId]) 
+						VALUES     (@UserId, 
+									@StorageAreaId, 
+									@RoleId)";
 
                 SqlCommand command = new SqlCommand(sql, connection);
 
-                command.Parameters.Add(new SqlParameter { ParameterName = "@StorageAreaID", SqlDbType = SqlDbType.Int, Value = StorageAreaId });
-                command.Parameters.Add(new SqlParameter { ParameterName = "@UserID", SqlDbType = SqlDbType.Int, Value = UserId });
-                command.Parameters.Add(new SqlParameter { ParameterName = "@RoleID", SqlDbType = SqlDbType.Int, Value = roleId });
+                command.Parameters.Add(new SqlParameter { ParameterName = "@StorageAreaId", SqlDbType = SqlDbType.Int, Value = StorageAreaId });
+                command.Parameters.Add(new SqlParameter { ParameterName = "@UserId", SqlDbType = SqlDbType.Int, Value = UserId });
+                command.Parameters.Add(new SqlParameter { ParameterName = "@RoleId", SqlDbType = SqlDbType.Int, Value = roleId });
 
                 await command.ExecuteNonQueryAsync();
             }

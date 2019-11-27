@@ -14,18 +14,18 @@ function jsonToForm(json, className, functionName) {
     </form>`;
 }
 
-function jsonToFormEdit(json, className, functionName) {
+// function jsonToFormEdit(json, className, functionName) {
 
-    let html = "";
+//     let html = "";
 
-    json = json[0];
+//     json = json[0];
 
-    for (var col in json){
-        html += `${col}: <input type="text" value="${json[col]}" name="${col}"><br>`;
-    }
+//     for (var col in json){
+//         html += `${col}: <input type="text" value="${json[col]}" name="${col}"><br>`;
+//     }
 
-    return `<form id="${className}">${html}
-    <br>
-    <button onclick="${functionName}(this.form)"type="button">Save</button>
-    </form>`;
-}
+//     return `<form id="${className}">${html}
+//     <br>
+//     <button onclick="${functionName}(this.form)"type="button">Save</button>
+//     </form>`;
+// }

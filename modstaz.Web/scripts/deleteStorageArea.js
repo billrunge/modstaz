@@ -4,7 +4,7 @@ function deleteStorageArea(storageAreaId) {
     request.open('POST', `${apiBaseUrl}/api/DeleteStorageArea`, true);
 
     let data = {
-        "StorageAreaID": storageAreaId,
+        "StorageAreaId": storageAreaId,
         "JWT": jwt
     };
 

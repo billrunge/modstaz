@@ -24,7 +24,7 @@ function getStorageArea() {
             if (resp == "Invalid JWT") {
                 redirectToLogin();
             }
-            var html = storageAreaJsonToTable(JSON.parse(resp), "storageAreaList");
+            var html = storageAreaJsonToTable(JSON.parse(resp), "storageAreaList", storageAreaId);
             
             document.getElementById('storageAreaItems').innerHTML = html;
         };

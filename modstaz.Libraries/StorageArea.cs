@@ -75,10 +75,10 @@ namespace modstaz.Libraries
         {
             if (onlyShowEditable)
             {
-                return await GetRowByIdAsync(rowId, await GetEditableColumnsAsync());
+                return await GetRowColumnsByIdAsync(rowId, await GetEditableColumnsAsync());
             }else
             {
-                return await GetRowByIdAsync(rowId, await GetColumnsAsync());
+                return await GetRowColumnsByIdAsync(rowId, await GetColumnsAsync());
             }
 
         }
@@ -89,7 +89,7 @@ namespace modstaz.Libraries
                 await connection.OpenAsync();
 
                 string sql = @"
-                        SELECT [ID], 
+                        SELECT [Id], 
                                [Name], 
                                [CreatedBy], 
                                [CreatedOn], 
@@ -114,7 +114,7 @@ namespace modstaz.Libraries
                 await connection.OpenAsync();
 
                 string sql = @"
-                        SELECT S.[ID], 
+                        SELECT S.[Id], 
                                S.[Name], 
                                S.[CreatedBy], 
                                S.[CreatedOn], 
@@ -150,7 +150,7 @@ namespace modstaz.Libraries
                 await connection.OpenAsync();
 
                 string sql = $@"
-                    SELECT [ID], 
+                    SELECT [Id], 
                            [DisplayName] 
                     FROM   [{ StorageAreaId }Columns] ";
 
@@ -186,7 +186,7 @@ namespace modstaz.Libraries
                 await connection.OpenAsync();
 
                 string sql = $@"
-                    SELECT [ID], 
+                    SELECT [Id], 
                            [DisplayName] 
                     FROM   [{ StorageAreaId }Columns]
                     WHERE  [IsEditable] = 1";
@@ -260,13 +260,13 @@ namespace modstaz.Libraries
                 string sql = $@"
                     SELECT { columnString } 
                     FROM   [{ StorageAreaId }Rows]
-                    WHERE [1] = @RowID";
+                    WHERE [1] = @RowId";
 
                 SqlCommand command = new SqlCommand(sql, connection);
 
                 command.Parameters.Add(new SqlParameter
                 {
-                    ParameterName = "@RowID",
+                    ParameterName = "@RowId",
                     SqlDbType = SqlDbType.Int,
                     Value = rowId
                 });
@@ -280,6 +280,49 @@ namespace modstaz.Libraries
                 }
             }
         }
+
+        private async Task<string> GetRowColumnsByIdAsync(int rowId, List<KeyValuePair<int, string>> idColumns)
+        {
+            List<Row.RowColumn> rowColumnsList = new List<Row.RowColumn>();
+
+
+            foreach (KeyValuePair<int, string> idColumn in idColumns)
+            {
+                int columnId = idColumn.Key;
+                Column column = new Column() { StorageAreaId = StorageAreaId };
+                Row.RowColumn rowColumn = new Row.RowColumn()
+                {
+                    ColumnId = columnId,
+                    DisplayName = idColumn.Value,
+                    RowId = rowId,
+                    ColumnTypeId = await column.GetColumnTypeIdByColumnId(columnId)
+                };
+
+                using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+                {
+                    await connection.OpenAsync();
+
+                    string sql = $@"
+                    SELECT [{ columnId }]
+                    FROM   [{ StorageAreaId }Rows]
+                    WHERE [1] = @RowId";
+
+                    SqlCommand command = new SqlCommand(sql, connection);
+
+                    command.Parameters.Add(new SqlParameter
+                    {
+                        ParameterName = "@RowId",
+                        SqlDbType = SqlDbType.Int,
+                        Value = rowId
+                    });
+                    object result = await command.ExecuteScalarAsync();
+                    rowColumn.Value = result.ToString();
+                    rowColumnsList.Add(rowColumn);
+                }
+            }
+            return JsonConvert.SerializeObject(rowColumnsList);
+        }
+
         async Task<int> CreateStorageAreaIdAsync(string name, int userId)
         {
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
@@ -292,22 +335,22 @@ namespace modstaz.Libraries
 									 [CreatedBy], 
 									 [CreatedOn], 
 									 [LastModified]) 
-						OUTPUT      INSERTED.ID 
+						OUTPUT      INSERTED.Id
 						VALUES      (@Name, 
-									 @UserID, 
+									 @UserId, 
 									 Getutcdate(), 
 									 Getutcdate()) ";
 
                 SqlCommand command = new SqlCommand(sql, connection);
 
                 command.Parameters.Add(new SqlParameter { ParameterName = "@Name", SqlDbType = SqlDbType.NVarChar, Value = name });
-                command.Parameters.Add(new SqlParameter { ParameterName = "@UserID", SqlDbType = SqlDbType.Int, Value = userId });
+                command.Parameters.Add(new SqlParameter { ParameterName = "@UserId", SqlDbType = SqlDbType.Int, Value = userId });
 
                 var results = await command.ExecuteScalarAsync();
 
                 if (!int.TryParse(results.ToString(), out int storageAreaId))
                 {
-                    throw new InvalidCastException("Unable to cast StorageAreaID returned from database to int");
+                    throw new InvalidCastException("Unable to cast StorageAreaId returned from database to int");
                 }
                 else
                 {
@@ -355,21 +398,21 @@ namespace modstaz.Libraries
 
 						CREATE TABLE [dbo].[{ storageAreaId }Columns] 
 						  ( 
-							 [ID]           [INT] IDENTITY(1, 1) NOT NULL, 
+							 [Id]           [INT] IDENTITY(1, 1) NOT NULL, 
 							 [DisplayName]  [NVARCHAR](255) NOT NULL UNIQUE, 
-							 [ColumnTypeID] [INT] NOT NULL,
+							 [ColumnTypeId] [INT] NOT NULL,
 							 [IsEditable]   [BIT] NOT NULL, 
 							 [CreatedOn]    [DATETIME] NOT NULL, 
 							 [LastModified] [DATETIME] NOT NULL, 
-							 PRIMARY KEY CLUSTERED ( [ID] ASC )WITH (STATISTICS_NORECOMPUTE = OFF, 
+							 PRIMARY KEY CLUSTERED ( [Id] ASC )WITH (STATISTICS_NORECOMPUTE = OFF, 
 							 IGNORE_DUP_KEY = OFF) ON [PRIMARY] 
 						  ) 
 						ON [PRIMARY]; 
 
-						ALTER TABLE [dbo].[{ storageAreaId }Columns]  WITH CHECK ADD  CONSTRAINT [FK__{ storageAreaId }Columns__ColumnTypeID] FOREIGN KEY([ColumnTypeID])
-						REFERENCES [dbo].[ColumnTypes] ([ID])
+						ALTER TABLE [dbo].[{ storageAreaId }Columns]  WITH CHECK ADD  CONSTRAINT [FK__{ storageAreaId }Columns__ColumnTypeId] FOREIGN KEY([ColumnTypeId])
+						REFERENCES [dbo].[ColumnTypes] ([Id])
 
-						ALTER TABLE [dbo].[{ storageAreaId }Columns] CHECK CONSTRAINT [FK__{ storageAreaId }Columns__ColumnTypeID]";
+						ALTER TABLE [dbo].[{ storageAreaId }Columns] CHECK CONSTRAINT [FK__{ storageAreaId }Columns__ColumnTypeId]";
 
                 SqlCommand command = new SqlCommand(sql, connection);
 
@@ -380,7 +423,7 @@ namespace modstaz.Libraries
                     StorageAreaId = storageAreaId,
                     IsEditable = false,
                     ColumnTypeId = (int)ColumnType.Types.Integer,
-                    DisplayName = "ID",
+                    DisplayName = "Id",
                     CreateColumnInRowsTable = false
                 };
                 await column.CreateColumnAsync();

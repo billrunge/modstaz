@@ -24,7 +24,7 @@ namespace modstaz.Libraries
                     INSERT INTO [Users] 
                                 ([EmailAddress], 
                                  [CreatedOn]) 
-                    output      inserted.ID 
+                    output      inserted.Id
                     VALUES      (@EmailAddress, 
                                  Getutcdate())";
 
@@ -36,7 +36,7 @@ namespace modstaz.Libraries
 
                 if (!int.TryParse(results.ToString(), out int userId))
                 {
-                    throw new InvalidCastException("Unable to cast UserID returned from database to int");
+                    throw new InvalidCastException("Unable to cast UserId returned from database to int");
                 }
                 else
                 {
@@ -53,7 +53,7 @@ namespace modstaz.Libraries
 
                 string sql = $@"
                     SELECT CASE 
-                             WHEN EXISTS (SELECT [ID] 
+                             WHEN EXISTS (SELECT [Id] 
                                           FROM   [Users] 
                                           WHERE  [EmailAddress] = @EmailAddress) THEN Cast(1 AS BIT) 
                              ELSE Cast(0 AS BIT) 
@@ -74,7 +74,7 @@ namespace modstaz.Libraries
                 await connection.OpenAsync();
 
                 string sql = $@"
-                    SELECT TOP 1 [ID] 
+                    SELECT TOP 1 [Id] 
                     FROM   [Users] 
                     WHERE  [EmailAddress] = @EmailAddress";
 

@@ -88,34 +88,34 @@ function jsonToForm(json, className, functionName) {
 
     json.map(function (row) {
         if (row['IsEditable'] === true) {
-            switch (row['ColumnTypeID']) {
+            switch (row['ColumnTypeId']) {
                 case 1:
-                    html += `${row['DisplayName']}: <select name="${row['ID']}">
+                    html += `${row['DisplayName']}: <select type_id="${row['ColumnTypeId']}" name="${row['Id']}">
                     <option value="NULL">Unset</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>
-                  </select>`
+                  </select><br>`
                     break;
                 case 2:
-                    html += `${row['DisplayName']}: <input type="number" name="${row['ID']}"><br>`;
+                    html += `${row['DisplayName']}: <input type="number" type_id="${row['ColumnTypeId']}" name="${row['Id']}"><br>`;
                     break;
                 case 3:
-                    html += `${row['DisplayName']}: <input type="number" name="${row['ID']}"><br>`;
+                    html += `${row['DisplayName']}: <input type="number" type_id="${row['ColumnTypeId']}" name="${row['Id']}"><br>`;
                     break;
                 case 4:
-                    html += `${row['DisplayName']}: <input type="text" name="${row['ID']}"><br>`;
+                    html += `${row['DisplayName']}: <input type="text" type_id="${row['ColumnTypeId']}" name="${row['Id']}"><br>`;
                     break;
                 case 5:
-                    html += `${row['DisplayName']}: <input type="text" name="${row['ID']}"><br>`;
+                    html += `${row['DisplayName']}: <input type="text" type_id="${row['ColumnTypeId']}" name="${row['Id']}"><br>`;
                     break;
                 case 6:
-                    html += `${row['DisplayName']}: <input type="text" name="${row['ID']}"><br>`;
+                    html += `${row['DisplayName']}: <input type="text" type_id="${row['ColumnTypeId']}" name="${row['Id']}"><br>`;
                     break;
                 case 7:
-                    html += `${row['DisplayName']}: <input type="text" name="${row['ID']}"><br>`;
+                    html += `${row['DisplayName']}: <input type="text" type_id="${row['ColumnTypeId']}" name="${row['Id']}"><br>`;
                     break;
                 case 8:
-                    html += `${row['DisplayName']}: <input type="date" name="${row['ID']}"><br>`;
+                    html += `${row['DisplayName']}: <input type="date" type_id="${row['ColumnTypeId']}" name="${row['Id']}"><br>`;
                     break;
             }
         }

@@ -25,7 +25,7 @@ namespace modstaz.Libraries
 
             List<RowColumn> columns = columnObj
                 .Where(x => (bool)x["IsEditable"] == true)
-                .Select(x => new RowColumn { ColumnId = (int)x["ID"], DisplayName = (string)x["DisplayName"], ColumnTypeId = (int)x["ColumnTypeID"] })
+                .Select(x => new RowColumn { ColumnId = (int)x["Id"], DisplayName = (string)x["DisplayName"], ColumnTypeId = (int)x["ColumnTypeId"] })
                 .ToList();
 
             List<RowColumn> updateColumns = (from i in inputColumns
@@ -80,7 +80,7 @@ namespace modstaz.Libraries
 
             List<RowColumn> columns = columnObj
                 .Where(x => (bool)x["IsEditable"] == true)
-                .Select(x => new RowColumn { ColumnId = (int)x["ID"], DisplayName = (string)x["DisplayName"] })
+                .Select(x => new RowColumn { ColumnId = (int)x["Id"], DisplayName = (string)x["DisplayName"] })
                 .ToList();
 
             List<RowColumn> updateColumns = (from i in inputColumns
@@ -98,13 +98,13 @@ namespace modstaz.Libraries
             string sql = $@"
                 UPDATE [{ StorageAreaId }Rows] 
                 SET    { values } 
-                WHERE  [1] = @RowID";
+                WHERE  [1] = @RowId";
 
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
             {
                 await connection.OpenAsync();
                 SqlCommand command = new SqlCommand(sql, connection);
-                command.Parameters.Add(new SqlParameter { ParameterName = "@RowID", SqlDbType = SqlDbType.Int, Value = rowId });
+                command.Parameters.Add(new SqlParameter { ParameterName = "@RowId", SqlDbType = SqlDbType.Int, Value = rowId });
                 await command.ExecuteNonQueryAsync();
             }
 
@@ -135,7 +135,7 @@ namespace modstaz.Libraries
 
 
 
-        class RowColumn
+        public class RowColumn
         {
             public int ColumnId { get; set; }
             public int RowId { get; set; }
