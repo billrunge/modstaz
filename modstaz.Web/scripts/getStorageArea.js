@@ -25,7 +25,7 @@ function getStorageArea() {
                 redirectToLogin();
             }
             var html = storageAreaJsonToTable(JSON.parse(resp), "storageAreaList", storageAreaId);
-            
+
             document.getElementById('storageAreaItems').innerHTML = html;
         };
 
@@ -74,6 +74,47 @@ function deleteRow(rowId) {
 
 }
 
+function storageAreaJsonToTable(json, className, storageAreaId) {
+    let cols;
+    let dateRegEx = /([0-9]+-[0-9]+-[0-9]+[T][0-9]+:[0-9]+:[0-9]+.[0-9]+)/;
+
+
+    if (json[0] === undefined) {
+        cols = [];
+    } else {
+        cols = Object.keys(json[0]);
+    }
+
+    let headerRow = '';
+    let bodyRows = '';
+
+    headerRow += `<th></th>`;
+
+    cols.map(function (col) {
+        headerRow += `<th>${col}</th>`;
+    });
+
+    headerRow += `<th></th>`;
+
+
+    json.map(function (row) {
+        bodyRows += '<tr>';
+        bodyRows += `<td><a href="/editRow.html?StorageAreaId=${storageAreaId}&RowId=${row["Id"]}">Edit</a></td>`;
+        cols.map(function (colName) {
+            if (dateRegEx.test(row[colName])) {
+                bodyRows += `<td>${moment(row[colName]).format("YYYY/MM/DD, h:mm:ss a")}</td>`;
+            } else {
+
+                bodyRows += `<td>${row[colName]}</td>`;
+            }
+        })
+
+        bodyRows += `<td><button onclick="deleteRow(${row["Id"]})" type="button">Delete</button></td>`;
+        bodyRows += '</tr>';
+    });
+    return `<table class="${className}"><tr>${headerRow}</tr>${bodyRows}</table>`;
+}
+
 
 function insertButtons() {
     let params = getGetParameters();
@@ -81,10 +122,9 @@ function insertButtons() {
     if (params.ID != undefined) {
         let storageAreaId = params.ID[0];
         let html = "";
-
-        html += `<a href="/getStorageAreas.html">Storage Areas</a><br>`;
         html += `<a href="/insertRow.html?ID=${storageAreaId}">Insert Row</a><br>`;
         html += `<a href="/getStorageAreaColumns.html?ID=${storageAreaId}">Edit Columns</a><br>`;
+        html += `<a href="/getStorageAreas.html">Storage Areas</a><br>`;
         html += `<a href="/index.html">Home</a><br>`;
         document.getElementById('storageAreaButtons').innerHTML = html;
 

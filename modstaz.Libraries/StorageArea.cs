@@ -30,6 +30,7 @@ namespace modstaz.Libraries
             StorageAreaId = await CreateStorageAreaIdAsync(StorageAreaName, UserId);
             await CreateRowsTableAsync(StorageAreaId);
             await CreateColumnsTableAsync(StorageAreaId);
+            await CreateViewsTablesAsync(StorageAreaId);
             Access access = new Access() { StorageAreaId = StorageAreaId, UserId = UserId };
             await access.AddAccessAsync(StorageAreaId, UserId, (int)Roles.Creator);
         }
@@ -39,12 +40,29 @@ namespace modstaz.Libraries
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
             {
                 await connection.OpenAsync();
+
                 string sql = $@"
+                    IF Object_id('{ StorageAreaId }ViewColumns', 'U') IS NOT NULL 
+                      BEGIN 
+                          DROP TABLE [{ StorageAreaId }ViewColumns] 
+                      END";
+                SqlCommand command = new SqlCommand(sql, connection);
+                await command.ExecuteNonQueryAsync();
+
+                command.CommandText = $@"
+                    IF Object_id('{ StorageAreaId }ViewConditions', 'U') IS NOT NULL 
+                      BEGIN 
+                          DROP TABLE [{ StorageAreaId }ViewConditions] 
+                      END";
+
+                await command.ExecuteNonQueryAsync();
+
+                command.CommandText = $@"                
                     IF Object_id('{ StorageAreaId }Columns', 'U') IS NOT NULL 
                       BEGIN 
                           DROP TABLE [{ StorageAreaId }Columns] 
                       END";
-                SqlCommand command = new SqlCommand(sql, connection);
+
                 await command.ExecuteNonQueryAsync();
 
                 command.CommandText = $@"
@@ -59,6 +77,30 @@ namespace modstaz.Libraries
 
                 command.Parameters.Add(new SqlParameter { ParameterName = "@StorageAreaID", SqlDbType = SqlDbType.Int, Value = StorageAreaId });
                 await command.ExecuteNonQueryAsync();
+
+                command.CommandText = $@"
+                    IF Object_id('{ StorageAreaId }Views', 'U') IS NOT NULL 
+                      BEGIN 
+                          DROP TABLE [{ StorageAreaId }Views] 
+                      END";
+
+                await command.ExecuteNonQueryAsync();
+
+                //command.CommandText = $@"
+                //    IF Object_id('{ StorageAreaId }ViewColumns', 'U') IS NOT NULL 
+                //      BEGIN 
+                //          DROP TABLE [{ StorageAreaId }ViewColumns] 
+                //      END";
+
+                //await command.ExecuteNonQueryAsync();
+
+                //command.CommandText = $@"
+                //    IF Object_id('{ StorageAreaId }ViewConditions', 'U') IS NOT NULL 
+                //      BEGIN 
+                //          DROP TABLE [{ StorageAreaId }ViewConditions] 
+                //      END";
+
+                //await command.ExecuteNonQueryAsync();
 
                 command.CommandText = $"DELETE FROM [StorageAreas] WHERE ID = @StorageAreaID";
                 await command.ExecuteNonQueryAsync();
@@ -434,6 +476,60 @@ namespace modstaz.Libraries
                 await column.CreateColumnAsync();
                 column.DisplayName = "Last Modified";
                 await column.CreateColumnAsync();
+            }
+        }
+
+        async Task CreateViewsTablesAsync(int storageAreaId)
+        {
+            using (SqlConnection connection = new SqlConnection())
+            {
+                connection.ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING");
+                connection.Open();
+
+                string sql = $@"
+						SET ANSI_NULLS ON; 
+						SET QUOTED_IDENTIFIER ON; 
+
+						CREATE TABLE [dbo].[{ storageAreaId }Views] 
+						  ( 
+							 [Id]           [INT] IDENTITY(1, 1) NOT NULL, 
+							 [Name]         [NVARCHAR](255) NOT NULL,
+							 [CreatedOn]    [DATETIME] NOT NULL, 
+							 [LastModified] [DATETIME] NOT NULL, 
+							 PRIMARY KEY CLUSTERED ( [Id] ASC )WITH (STATISTICS_NORECOMPUTE = OFF, 
+							 IGNORE_DUP_KEY = OFF) ON [PRIMARY] 
+						  ) 
+						ON [PRIMARY];
+
+						CREATE TABLE [dbo].[{ storageAreaId }ViewColumns] 
+						  ( 
+							 [Id]           [INT] IDENTITY(1, 1) NOT NULL, 
+							 [ViewId]       [INT] FOREIGN KEY REFERENCES [{ storageAreaId }Views](Id),
+							 [ColumnId]     [INT] FOREIGN KEY REFERENCES [{ storageAreaId }Columns](Id), 
+							 [Order]        [INT] NOT NULL, 
+							 [CreatedOn]    [DATETIME] NOT NULL, 
+							 [LastModified] [DATETIME] NOT NULL, 
+							 PRIMARY KEY CLUSTERED ( [Id] ASC )WITH (STATISTICS_NORECOMPUTE = OFF, 
+							 IGNORE_DUP_KEY = OFF) ON [PRIMARY] 
+						  ) 
+						ON [PRIMARY];
+
+						CREATE TABLE [dbo].[{ storageAreaId }ViewConditions] 
+						  ( 
+							 [Id]           [INT] IDENTITY(1, 1) NOT NULL, 
+							 [ViewId]       [INT] FOREIGN KEY REFERENCES [{ storageAreaId }Views](Id),
+							 [ColumnId]     [INT] FOREIGN KEY REFERENCES [{ storageAreaId }Columns](Id), 
+							 [Condition]    [NVARCHAR](500) NOT NULL, 
+							 [CreatedOn]    [DATETIME] NOT NULL, 
+							 [LastModified] [DATETIME] NOT NULL, 
+							 PRIMARY KEY CLUSTERED ( [Id] ASC )WITH (STATISTICS_NORECOMPUTE = OFF, 
+							 IGNORE_DUP_KEY = OFF) ON [PRIMARY] 
+						  ) 
+						ON [PRIMARY];";
+
+                SqlCommand command = new SqlCommand(sql, connection);
+
+                await command.ExecuteNonQueryAsync();
             }
         }
     }
