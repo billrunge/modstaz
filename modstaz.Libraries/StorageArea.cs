@@ -86,22 +86,6 @@ namespace modstaz.Libraries
 
                 await command.ExecuteNonQueryAsync();
 
-                //command.CommandText = $@"
-                //    IF Object_id('{ StorageAreaId }ViewColumns', 'U') IS NOT NULL 
-                //      BEGIN 
-                //          DROP TABLE [{ StorageAreaId }ViewColumns] 
-                //      END";
-
-                //await command.ExecuteNonQueryAsync();
-
-                //command.CommandText = $@"
-                //    IF Object_id('{ StorageAreaId }ViewConditions', 'U') IS NOT NULL 
-                //      BEGIN 
-                //          DROP TABLE [{ StorageAreaId }ViewConditions] 
-                //      END";
-
-                //await command.ExecuteNonQueryAsync();
-
                 command.CommandText = $"DELETE FROM [StorageAreas] WHERE ID = @StorageAreaID";
                 await command.ExecuteNonQueryAsync();
 
