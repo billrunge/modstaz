@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace modstaz.Libraries
 {
-    class View
+    public class View
     {
         public int StorageAreaId { get; set; }
 
@@ -58,57 +59,81 @@ namespace modstaz.Libraries
                 await command.ExecuteNonQueryAsync();
             }
         }
-        public async Task CreateViewConditionAsync(int viewId, int columnId, string condition)
+        //public async Task CreateViewConditionAsync(int viewId, int columnId, string condition)
+        //{
+        //    using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+        //    {
+        //        await connection.OpenAsync();
+
+        //        string sql = $@"
+        //                INSERT INTO [{ StorageAreaId }ViewConditions] 
+        //                            ([ViewId], 
+        //                             [ColumnId], 
+        //                             [Condition], 
+        //                             [CreatedOn], 
+        //                             [LastModified]) 
+        //                VALUES      (@ViewId, 
+        //                             @ColumnId, 
+        //                             @Condition, 
+        //                             Getutcdate(), 
+        //                             Getutcdate())";
+
+        //        SqlCommand command = new SqlCommand(sql, connection);
+        //        command.Parameters.Add(new SqlParameter { ParameterName = "@ViewId", SqlDbType = SqlDbType.Int, Value = viewId });
+        //        command.Parameters.Add(new SqlParameter { ParameterName = "@ColumnId", SqlDbType = SqlDbType.Int, Value = columnId });
+        //        command.Parameters.Add(new SqlParameter { ParameterName = "@Order", SqlDbType = SqlDbType.NVarChar, Value = condition });
+        //        await command.ExecuteNonQueryAsync();
+        //    }
+        //}
+
+        public async Task<List<ViewColumn>> GetViewColumnsAsync(int viewId)
         {
+            List<ViewColumn> viewColumns = new List<ViewColumn>() { new ViewColumn() { ColumnId = 1, DisplayName = "Id", Order = 0, ViewId = viewId } };
+
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
             {
                 await connection.OpenAsync();
 
                 string sql = $@"
-                        INSERT INTO [{ StorageAreaId }ViewConditions] 
-                                    ([ViewId], 
-                                     [ColumnId], 
-                                     [Condition], 
-                                     [CreatedOn], 
-                                     [LastModified]) 
-                        VALUES      (@ViewId, 
-                                     @ColumnId, 
-                                     @Condition, 
-                                     Getutcdate(), 
-                                     Getutcdate())";
+                        SELECT C.[DisplayName], 
+                               VC.[ColumnId], 
+                               VC.[Order] 
+                        FROM   [{ StorageAreaId }ViewColumns] VC 
+                               INNER JOIN [{ StorageAreaId }Columns] C 
+                                       ON VC.[ColumnId] = C.[Id] 
+                        WHERE  VC.[ViewId] = @ViewId
+                        ORDER BY VC.[Order] ASC";
 
                 SqlCommand command = new SqlCommand(sql, connection);
                 command.Parameters.Add(new SqlParameter { ParameterName = "@ViewId", SqlDbType = SqlDbType.Int, Value = viewId });
-                command.Parameters.Add(new SqlParameter { ParameterName = "@ColumnId", SqlDbType = SqlDbType.Int, Value = columnId });
-                command.Parameters.Add(new SqlParameter { ParameterName = "@Order", SqlDbType = SqlDbType.NVarChar, Value = condition });
-                await command.ExecuteNonQueryAsync();
+                DataTable viewColumnsDataTable = new DataTable();
+                using (SqlDataReader dataReader = await command.ExecuteReaderAsync())
+                {
+                    viewColumnsDataTable.Load(dataReader);
+
+                    foreach (DataRow row in viewColumnsDataTable.Rows)
+                    {
+                        ViewColumn viewColumn = new ViewColumn()
+                        {
+                            ViewId = viewId,
+                            Order = (int)row["Order"],
+                            ColumnId = (int)row["ColumnId"],
+                            DisplayName = (string)row["DisplayName"]
+                        };
+                        viewColumns.Add(viewColumn);
+                    }
+                    return viewColumns;
+                }
             }
+
         }
-
-        public async Task GetViewColumnsAsync(int viewId)
-        {
-            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
-            {
-                await connection.OpenAsync();
-
-                string sql = $@"
-                        SELECT [ColumnId] 
-                        FROM   [1ViewColumns] 
-                        WHERE  [ViewId] = @ViewId 
-                        ORDER  BY [Order]";
-
-                SqlCommand command = new SqlCommand(sql, connection);
-                command.Parameters.Add(new SqlParameter { ParameterName = "@ViewId", SqlDbType = SqlDbType.Int, Value = viewId });
-                
-            }
-        }
-
-
-
     }
 
     public class ViewColumn
     {
         public int ViewId { get; set; }
+        public int ColumnId { get; set; }
+        public string DisplayName { get; set; }
+        public int Order { get; set; }
     }
 }

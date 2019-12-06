@@ -5,14 +5,15 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using modstaz.Libraries;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace modstaz
+namespace modstaz.Functions
 {
-    public static class IsJWTValid
+    public static class GetView
     {
-        [FunctionName("GetStorageArea")]
+        [FunctionName("GetView")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
@@ -22,6 +23,7 @@ namespace modstaz
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             int storageAreaId = data.StorageAreaId;
+            int viewId = data.ViewId;
             string jwtString = data.JWT;
 
             JWT jwtHelper = new JWT()
@@ -33,10 +35,9 @@ namespace modstaz
 
             if (jwtResp != "false")
             {
-                StorageArea storageArea = new StorageArea() { StorageAreaId = storageAreaId, Logger = log };
-                return new OkObjectResult(await storageArea.GetStorageAreaAsync(1));
+                View view = new View() { StorageAreaId = storageAreaId };
+                return new OkObjectResult(await view.GetViewColumnsAsync(viewId));
             }
-
             return (ActionResult)new BadRequestObjectResult("Invalid JWT");
         }
     }

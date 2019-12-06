@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -14,6 +15,7 @@ namespace modstaz.Libraries
         public string StorageAreaName { get; set; }
         public int UserId { get; set; }
         public int StorageAreaId { get; set; }
+        public ILogger Logger { get; set; }
 
         public StorageArea(string storageAreaName, int userId)
         {
@@ -92,9 +94,11 @@ namespace modstaz.Libraries
             }
         }
 
-        public async Task<string> GetStorageAreaAsync()
+        public async Task<string> GetStorageAreaAsync(int viewId)
         {
-            return await GetRowsAsync(await GetColumnsAsync());
+            //return await GetRowsAsync(await GetColumnsAsync());
+            View view = new View() { StorageAreaId = StorageAreaId }; 
+            return await GetRowsAsync(await view.GetViewColumnsAsync(viewId));
         }
 
         public async Task<string> GetStorageAreaRowAsync(int rowId, bool onlyShowEditable)
@@ -241,14 +245,17 @@ namespace modstaz.Libraries
                 }
             }
         }
-        private async Task<string> GetRowsAsync(List<KeyValuePair<int, string>> idColumn)
+        private async Task<string> GetRowsAsync(List<ViewColumn> viewColumns)
         {
-            string columnString = $"[{ idColumn[idColumn.Count - 1].Key.ToString() }] AS [{ idColumn[idColumn.Count - 1].Value }]";
 
-            for (int i = idColumn.Count - 2; i >= 0; i--)
+            string columnString = "";
+            foreach (ViewColumn vc in viewColumns)
             {
-                columnString = $"[{ idColumn[i].Key.ToString() }] AS [{ idColumn[i].Value }], " + columnString;
+                columnString += $" [{ vc.ColumnId }] AS [{ vc.DisplayName }],";
             }
+            columnString = columnString.TrimEnd(',');
+
+            Logger.LogInformation(columnString);
 
             using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
             {
@@ -269,6 +276,34 @@ namespace modstaz.Libraries
                 }
             }
         }
+        //private async Task<string> GetRowsAsync(List<KeyValuePair<int, string>> idColumn)
+        //{
+        //    string columnString = $"[{ idColumn[idColumn.Count - 1].Key.ToString() }] AS [{ idColumn[idColumn.Count - 1].Value }]";
+
+        //    for (int i = idColumn.Count - 2; i >= 0; i--)
+        //    {
+        //        columnString = $"[{ idColumn[i].Key.ToString() }] AS [{ idColumn[i].Value }], " + columnString;
+        //    }
+
+        //    using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+        //    {
+        //        await connection.OpenAsync();
+
+        //        string sql = $@"
+        //            SELECT { columnString } 
+        //            FROM   [{ StorageAreaId }Rows]";
+
+        //        SqlCommand command = new SqlCommand(sql, connection);
+
+        //        using (SqlDataReader dataReader = await command.ExecuteReaderAsync())
+        //        {
+        //            DataTable dataTable = new DataTable();
+        //            dataTable.Load(dataReader);
+
+        //            return JsonConvert.SerializeObject(dataTable, Formatting.Indented);
+        //        }
+        //    }
+        //}
 
         private async Task<string> GetRowByIdAsync(int rowId, List<KeyValuePair<int, string>> idColumn)
         {
