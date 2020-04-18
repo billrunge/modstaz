@@ -87,14 +87,15 @@ function storageAreaJsonToTable(json, className, storageAreaId) {
 
     let headerRow = '';
     let bodyRows = '';
+    let emptyHeader = `<th></th>`;
 
-    headerRow += `<th></th>`;
+    headerRow += emptyHeader;
 
     cols.map(function (col) {
         headerRow += `<th>${col}</th>`;
     });
 
-    headerRow += `<th></th>`;
+    headerRow += emptyHeader;
 
 
     json.map(function (row) {
