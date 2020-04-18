@@ -1,4 +1,5 @@
 getStorageAreaViews();
+insertButtons();
 
 function getStorageAreaViews() {
     
@@ -73,4 +74,18 @@ function jsonToTable(json, className) {
         bodyRows += '</tr>';
     });
     return `<table class="${className}"><tr>${headerRow}</tr>${bodyRows}</table>`;
+}
+
+function insertButtons() {
+    let params = getGetParameters();
+
+    if (params.ID != undefined) {
+        let storageAreaId = params.ID[0];
+        let html = "";
+        html += `<a href="/getStorageArea.html?ID=${storageAreaId}">Return to Storage Area</a><br>`;
+        html += `<a href="/getStorageAreas.html">Storage Areas</a><br>`;
+        html += `<a href="/index.html">Home</a><br>`;
+        document.getElementById('insertLinks').innerHTML = html;
+    }
+
 }

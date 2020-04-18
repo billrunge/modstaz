@@ -153,6 +153,30 @@ namespace modstaz.Libraries
             }
         }
 
+        public async Task<string> DeleteViewAsync(int viewId)
+        {
+            string sql;
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+                sql = $@"
+                        DELETE FROM [{ StorageAreaId }ViewColumns] 
+                        WHERE  [Id] = @ViewId
+
+                        DELETE FROM [{ StorageAreaId }ViewConditions] 
+                        WHERE  [Id] = @ViewId
+
+                        DELETE FROM [{ StorageAreaId }Views] 
+                        WHERE  [Id] = @ViewId";
+
+                SqlCommand command = new SqlCommand(sql, connection);
+                command.Parameters.Add(new SqlParameter { ParameterName = "@ViewId", SqlDbType = SqlDbType.Int, Value = viewId });
+                await command.ExecuteNonQueryAsync();
+
+                return "View deleted successfully";
+            }
+        }
+
     }
 
     public class ViewColumn
