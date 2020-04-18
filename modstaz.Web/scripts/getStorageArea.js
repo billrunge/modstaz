@@ -125,6 +125,7 @@ function insertButtons() {
         let html = "";
         html += `<a href="/insertRow.html?ID=${storageAreaId}">Insert Row</a><br>`;
         html += `<a href="/getStorageAreaColumns.html?ID=${storageAreaId}">Edit Columns</a><br>`;
+        html += `<a href="/getStorageAreaViews.html?ID=${storageAreaId}">Edit Views</a><br>`;
         html += `<a href="/getStorageAreas.html">Storage Areas</a><br>`;
         html += `<a href="/index.html">Home</a><br>`;
         document.getElementById('storageAreaButtons').innerHTML = html;

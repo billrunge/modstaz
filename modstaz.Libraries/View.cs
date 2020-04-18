@@ -127,6 +127,32 @@ namespace modstaz.Libraries
             }
 
         }
+
+        public async Task<string> GetViewsAsync()
+        {
+            using (SqlConnection connection = new SqlConnection() { ConnectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING") })
+            {
+                await connection.OpenAsync();
+
+                string sql = $@"
+                        SELECT [Id], 
+                               [Name], 
+                               [CreatedOn], 
+                               [LastModified] 
+                        FROM   [{ StorageAreaId }Views] ";
+
+                SqlCommand command = new SqlCommand(sql, connection);
+
+                using (SqlDataReader dataReader = await command.ExecuteReaderAsync())
+                {
+                    DataTable dataTable = new DataTable();
+                    dataTable.Load(dataReader);
+
+                    return JsonConvert.SerializeObject(dataTable, Formatting.Indented);
+                }
+            }
+        }
+
     }
 
     public class ViewColumn
@@ -136,4 +162,7 @@ namespace modstaz.Libraries
         public string DisplayName { get; set; }
         public int Order { get; set; }
     }
+
+
+
 }
