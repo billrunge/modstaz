@@ -1,3 +1,5 @@
+let storageAreaId;
+let viewId;
 getViewColumns();
 
 function getViewColumns(form) {
@@ -5,8 +7,8 @@ function getViewColumns(form) {
     let jwt = localStorage.getItem('JWT');
 
     if (params.ID != undefined) {
-        let storageAreaId = params.ID[0];
-        let viewId = params.ViewId[0];
+        storageAreaId = params.ID[0];
+        viewId = params.ViewId[0];
 
         var request = new XMLHttpRequest();
         request.open('POST', `${apiBaseUrl}/api/GetViewColumns`, true);
@@ -68,8 +70,34 @@ function jsonToTable(json, className) {
                 bodyRows += `<td></td>`;
             }
         })
-        bodyRows += `<td><button onclick="deleteStorageArea(${row["Id"]})" type="button">Delete</button></td>`;
+        bodyRows += `<td><button onclick="deleteViewColumn(${row["columnId"]})" type="button">Delete</button></td>`;
         bodyRows += '</tr>';
     });
     return `<table class="${className}"><tr>${headerRow}</tr>${bodyRows}</table>`;
+}
+
+function deleteViewColumn(columnId) {
+    let jwt = localStorage.getItem('JWT');
+    var request = new XMLHttpRequest();
+    request.open('POST', `${apiBaseUrl}/api/DeleteViewColumn`, true);
+
+    let data = {
+        "StorageAreaId": storageAreaId,
+        "ColumnId": columnId,
+        "JWT": jwt,
+        "ViewId": viewId
+    };
+
+    request.send(JSON.stringify(data));
+
+    request.onload = function () {
+        var resp = this.response;
+        console.log(resp);
+        if (resp == "Invalid JWT")
+        {
+            redirectToLogin();
+        }
+        getViewColumns();
+    };
+    request.onerror = function () { };
 }
