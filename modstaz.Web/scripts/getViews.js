@@ -1,9 +1,9 @@
 let storageAreaId;
-getStorageAreaViews();
+getViews();
 insertButtons();
 
 
-function getStorageAreaViews() {
+function getViews() {
     
     let params = getGetParameters();
     let jwt = localStorage.getItem('JWT');
@@ -11,7 +11,7 @@ function getStorageAreaViews() {
     if (params.ID != undefined) {
         storageAreaId = params.ID[0];
         var request = new XMLHttpRequest();
-        request.open('POST', `${apiBaseUrl}/api/GetStorageAreaViews`, true);
+        request.open('POST', `${apiBaseUrl}/api/GetViews`, true);
 
         let data = {
             "StorageAreaId": storageAreaId,
@@ -25,9 +25,9 @@ function getStorageAreaViews() {
             if (resp == "Invalid JWT") {
                 redirectToLogin();
             }
-            var html = jsonToTable(JSON.parse(resp), "storageAreaViewsList", storageAreaId);
+            var html = jsonToTable(JSON.parse(resp), "viewsList", storageAreaId);
 
-            document.getElementById('storageAreaViews').innerHTML = html;
+            document.getElementById('views').innerHTML = html;
         };
 
         request.onerror = function () { };
@@ -63,7 +63,7 @@ function jsonToTable(json, className) {
         bodyRows += '<tr>';
         cols.map(function (colName) {
             if (colName == 'Name') {
-                bodyRows += `<td><a href="../GetStorageArea.html?ID=${row["Id"]}">${row[colName]}</a></td>`;
+                bodyRows += `<td><a href="../GetViewColumns.html?ID=${storageAreaId}&ViewId=${row["Id"]}">${row[colName]}</a></td>`;
             } else if (dateRegEx.test(row[colName])) {
                 bodyRows += `<td>${moment(row[colName]).format("YYYY/MM/DD, h:mm:ss a")}</td>`;
             } else if (colName != 'Id') {
@@ -113,7 +113,7 @@ function deleteView(viewId) {
         {
             redirectToLogin();
         }
-        getStorageAreaViews();
+        getViews();
     };
     request.onerror = function () { };
 }

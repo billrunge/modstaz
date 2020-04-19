@@ -24,7 +24,7 @@ function createView(form) {
             {
                 redirectToLogin();
             }
-            window.location.replace(`/getStorageAreaViews.html?ID=${storageAreaId}`);
+            window.location.replace(`/getViews.html?ID=${storageAreaId}`);
         };
 
         request.onerror = function () { };
@@ -42,7 +42,7 @@ function loadCreateView() {
         storageAreaId = params.ID[0];
 
     } else {
-        window.location.replace(`../getStorageAreaViews.html?ID=${storageAreaId}`);
+        window.location.replace(`../getViews.html?ID=${storageAreaId}`);
     }
     insertCreateViewLinks()
 }
@@ -54,7 +54,7 @@ function insertCreateViewLinks() {
         let storageAreaId = params.ID[0];
         let html = "";
 
-        html += `<a href="/getStorageAreaViews.html?ID=${storageAreaId}">Return to Edit Views</a><br>`;
+        html += `<a href="/getViews.html?ID=${storageAreaId}">Return to Edit Views</a><br>`;
         html += `<a href="/getStorageArea.html?ID=${storageAreaId}">Storage Area</a><br>`;
         html += `<a href="/index.html">Home</a><br>`;
         document.getElementById('createViewLinks').innerHTML = html;

@@ -15,7 +15,7 @@ namespace modstaz
 {
     public static class GetStorageAreaViews
     {
-        [FunctionName("GetStorageAreaViews")]
+        [FunctionName("GetViews")]
         public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req, ILogger log)
         {
             log.LogInformation("GetViews trigger function processed a request.");
