@@ -160,22 +160,29 @@ namespace modstaz.Libraries
             {
                 await connection.OpenAsync();
                 sql = $@"
-                        DELETE FROM [{ StorageAreaId }ViewColumns] 
-                        WHERE  [Id] = @ViewId
-
                         DELETE FROM [{ StorageAreaId }ViewConditions] 
-                        WHERE  [Id] = @ViewId
-
-                        DELETE FROM [{ StorageAreaId }Views] 
-                        WHERE  [Id] = @ViewId";
+                        WHERE  [ViewId] = @ViewId";
 
                 SqlCommand command = new SqlCommand(sql, connection);
                 command.Parameters.Add(new SqlParameter { ParameterName = "@ViewId", SqlDbType = SqlDbType.Int, Value = viewId });
                 await command.ExecuteNonQueryAsync();
 
+                command.CommandText = $@"
+                        DELETE FROM [{ StorageAreaId }ViewColumns] 
+                        WHERE  [ViewId] = @ViewId";
+
+                await command.ExecuteNonQueryAsync();
+
+                command.CommandText = $@"
+                        DELETE FROM [{ StorageAreaId }Views] 
+                        WHERE  [Id] = @ViewId";
+
+                await command.ExecuteNonQueryAsync();
+
                 return "View deleted successfully";
             }
         }
+
 
     }
 

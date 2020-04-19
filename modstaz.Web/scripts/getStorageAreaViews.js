@@ -1,5 +1,7 @@
+let storageAreaId;
 getStorageAreaViews();
 insertButtons();
+
 
 function getStorageAreaViews() {
     
@@ -7,7 +9,7 @@ function getStorageAreaViews() {
     let jwt = localStorage.getItem('JWT');
 
     if (params.ID != undefined) {
-        let storageAreaId = params.ID[0];
+        storageAreaId = params.ID[0];
         var request = new XMLHttpRequest();
         request.open('POST', `${apiBaseUrl}/api/GetStorageAreaViews`, true);
 
@@ -70,7 +72,7 @@ function jsonToTable(json, className) {
                 bodyRows += `<td></td>`;
             }
         })
-        bodyRows += `<td><button onclick="deleteStorageArea(${row["Id"]})" type="button">Delete</button></td>`;
+        bodyRows += `<td><button onclick="deleteView(${row["Id"]})" type="button">Delete</button></td>`;
         bodyRows += '</tr>';
     });
     return `<table class="${className}"><tr>${headerRow}</tr>${bodyRows}</table>`;
@@ -88,4 +90,29 @@ function insertButtons() {
         document.getElementById('insertLinks').innerHTML = html;
     }
 
+}
+
+function deleteView(viewId) {
+    let jwt = localStorage.getItem('JWT');
+    var request = new XMLHttpRequest();
+    request.open('POST', `${apiBaseUrl}/api/Deleteview`, true);
+
+    let data = {
+        "StorageAreaId": storageAreaId,
+        "JWT": jwt,
+        "ViewId": viewId
+    };
+
+    request.send(JSON.stringify(data));
+
+    request.onload = function () {
+        var resp = this.response;
+        console.log(resp);
+        if (resp == "Invalid JWT")
+        {
+            redirectToLogin();
+        }
+        getStorageAreaViews();
+    };
+    request.onerror = function () { };
 }
