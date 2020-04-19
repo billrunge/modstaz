@@ -84,6 +84,7 @@ function insertButtons() {
     if (params.ID != undefined) {
         let storageAreaId = params.ID[0];
         let html = "";
+        html += `<a href="/createView.html?ID=${storageAreaId}">Create View</a><br>`;
         html += `<a href="/getStorageArea.html?ID=${storageAreaId}">Return to Storage Area</a><br>`;
         html += `<a href="/getStorageAreas.html">Storage Areas</a><br>`;
         html += `<a href="/index.html">Home</a><br>`;

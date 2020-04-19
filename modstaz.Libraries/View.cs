@@ -183,7 +183,6 @@ namespace modstaz.Libraries
             }
         }
 
-
     }
 
     public class ViewColumn
