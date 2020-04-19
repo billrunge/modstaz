@@ -30,6 +30,7 @@ function getViewColumns(form) {
             var html = jsonToTable(JSON.parse(resp), "viewColumnsList");
 
             document.getElementById('viewColumns').innerHTML = html;
+            insertLinks();
         };
 
         request.onerror = function () { };
@@ -100,4 +101,19 @@ function deleteViewColumn(columnId) {
         getViewColumns();
     };
     request.onerror = function () { };
+}
+
+function insertLinks() {
+    let params = getGetParameters();
+
+    if (params.ID != undefined) {
+        let storageAreaId = params.ID[0];
+        let html = "";
+        html += `<a href="/getViews.html?ID=${storageAreaId}">Return to views</a><br>`;
+        html += `<a href="/getStorageArea.html?ID=${storageAreaId}">Return to Storage Area</a><br>`;
+        html += `<a href="/getStorageAreas.html">Storage Areas</a><br>`;
+        html += `<a href="/index.html">Home</a><br>`;
+        document.getElementById('links').innerHTML = html;
+    }
+
 }
